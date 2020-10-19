@@ -1,31 +1,18 @@
-// This app serves some static content from a static path and serves a REST API that's
-// defined on the api.yaml swagger 2.0 file
-// Usage:
-// node server -h
+const express = require('express');
+const path = require('path');
+const fs = require('fs');
 
-var SwaggerBP = require('swagger-boilerplate');
-var Utils = SwaggerBP.Utils;
-var Logger = Utils.MultiLevelLogger;
-var logger = new Logger('HTTP Server App');
+const app = express();
 
-var Server = require('swagger-boilerplate').Server;
+app.use(express.static(path.resolve(__dirname, 'dist')));
 
-var server =
- new Server({
-   apiFile: './api.yml',
-   modulePath: __dirname + '/server/',
-   appName: 'OpenTokRTC Main',
-   staticOptions: {
-     dotfiles: 'ignore',
-     extensions: ['jpg'],
-     index: false,
-     redirect: false,
-     setHeaders: function(res, path) {
-       if (path.indexOf('/images/background.jpg') > -1) {
-         res.set('Cache-Control', 'max-age=31536000')
-       }
-     }
-   }
- });
+app.get('/', function(req, res) {
+  const pathToHtmlFile = path.resolve(__dirname, 'dist/landing.html');
+  const contentFromFile = fs.readFileSync(pathToHtmlFile, 'utf-8');
+  res.send(contentFromFile);
+});
 
-server.start();
+app.listen(3000, function() {
+  console.log(`App listening on port ${3000}`);
+});
+
