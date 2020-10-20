@@ -11,6 +11,7 @@ let closeHandlers = {};
 let keyPressHandler;
 
 export function show(selector) {
+  console.log('show called');
   let screenFree;
 
   preShowFocusElement = document.activeElement;
@@ -18,7 +19,7 @@ export function show(selector) {
     preShowFocusElement.blur();
   }
 
-  if (modalShown) {
+  if (!modalShown) {
     screenFree = Promise.resolve();
   } else {
     screenFree = new Promise(resolve => {
@@ -27,7 +28,7 @@ export function show(selector) {
   }
 
   return screenFree.then(() => {
-    return new Promise(resolve => {
+    return new Promise(function(resolve) {
       modalShown = true;
 
       const modal = document.querySelector(selector);
@@ -36,6 +37,9 @@ export function show(selector) {
         addCloseHandler(selector);
         resolve();
       });
+      // ! I added this here because the modal wouldn't close.
+      // ! May need to come back to this.
+      addCloseHandler(selector);
 
       modal.classList.add('visible');
       modal.classList.add('show');
@@ -68,7 +72,7 @@ function addCloseHandler(selector) {
   document.body.addEventListener('keyup', keyPressHandler);
 }
 
-function hide(selector) {
+export function hide(selector) {
   return new Promise(resolve => {
     const modal = document.querySelector(selector);
 
