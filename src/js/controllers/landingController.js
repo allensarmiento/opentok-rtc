@@ -1,7 +1,6 @@
 import * as LandingView from '../views/landingView';
 import * as Modal from '../components/modal';
 import * as Events from '../state/events';
-import '../../less/main.less';
 
 /* NOTE:
  *
@@ -35,6 +34,29 @@ const DOM = {
  * TODO: Start room page
  */
 export function init() {
+  // Note that since the server forbids loading the content on an iframe this
+  // should not execute. But it doesn't hurt either.
+  if (window.top !== window.self && !window.iframing_allowed) {
+    // If we're being loaded inside an ifram just hijack the top level window
+    // and go back to the index page.
+    window.top.document.location = '/index.html';
+  } else {
+    // And setting this on an else because the re-location might fail in some
+    // cases.
+    startApp();
+  }
+
+  if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
+    document.querySelector('.safari-plug').style.display = 'block';
+  }
+}
+
+/**
+ * Sets handlers and resets forms
+ */
+function startApp() {
+  document.body.classList.remove('forbidden');
+
   LandingView.addHeader(landingVariables.isWebRTCVersion);
 
   if (landingVariables.showTos) {
@@ -44,10 +66,6 @@ export function init() {
   resetForm();
   setUsernameFromLocalStorage();
   addHandlers();
-
-  if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
-    document.querySelector('.safari-plug').style.display = 'block';
-  }
 }
 
 /**

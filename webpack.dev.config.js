@@ -11,7 +11,8 @@ module.exports = {
     writeToDisk: true
   },
   entry: {
-    'landing': './src/js/landing.js'
+    'landing': './src/js/landing.js',
+    'room': './src/js/room.js'
   },
   output: {
     filename: '[name].bundle.js',
@@ -62,6 +63,13 @@ module.exports = {
       title: 'Landing Page',
       description: 'Landing page',
       template: 'src/templates/landing.ejs'
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'room.html',
+      chunks: ['room'],
+      title: 'Room Page',
+      description: 'Room page',
+      template: 'src/templates/room.ejs'
     }),
   ]
 };
