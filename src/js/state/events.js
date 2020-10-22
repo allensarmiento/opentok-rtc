@@ -1,9 +1,3 @@
-export function sendEvent(eventName, data) {
-  data = data ? { detail: data } : {};
-
-  window.dispatchEvent(new CustomEvent(eventName, data));
-}
-
 class Events {
   constructor() {
     this.events = {};
@@ -21,4 +15,18 @@ class Events {
 }
 
 export const events = new Events();
+
+export function addEventHandler(eventName, handler) {
+  events.addEventHandler(eventName, handler);
+}
+
+export function removeEventHandler(eventName, handler) {
+  events.removeEventHandler(eventName, handler);
+}
+
+export function sendEvent(eventName, data) {
+  data = data ? { detail: data } : {};
+
+  window.dispatchEvent(new CustomEvent(eventName, data));
+}
 
