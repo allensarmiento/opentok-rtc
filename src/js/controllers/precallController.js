@@ -1,15 +1,18 @@
 import * as PrecallView from '../views/precallView';
 import * as Events from '../state/events';
 
+////////////////////
+// Initialization
 let alreadyInitialized = false;
 
-export function init() {
+export function init(showTos) {
   if (alreadyInitialized) return;
   
-  PrecallView.init();
   addEventHandlers();
   PrecallView.renderPrecallTemplate();
-  // TODO: Render tosTemplate if available
+  if (showTos) {
+    PrecallView.renderTosTemplate();
+  }
   alreadyInitialized = true;
 }
 
@@ -61,5 +64,68 @@ function setSwitchStatus(status, switchName, eventName) {
   if (newStatus !== oldStatus) {
     Events.sendEvent(eventName, { status: newStatus });
   }
+}
+
+////////////////////
+//  
+const publisherOptions = {
+  publishAudio: true,
+  publishVideo: true,
+  name: '',
+  width: '100%',
+  height: '100%',
+  insertMode: 'append',
+  showControls: false,
+};
+
+let publisher;
+
+export function showCallSettingsPrompt(roomName, username, otHelper) {
+  const selector = '.user-name-modal'; 
+
+}
+
+function getVideoPreviewEventHandlers(otHelper) {
+  return {
+    toggleFacingMode: () => {
+      otHelper.toggleFacingMode().then(dev => {
+        const deviceId = dev.deviceId;
+        publisherOptions.videoSource = deviceId;
+        window.localStorage.setItem('videoDeviceId', deviceId);
+      });
+    },
+
+    setAudioSource: evt => {
+      const deviceId = evt.detail;
+      otHelper.setAudioSource(deviceId);
+      publisherOptions.audioSource = deviceId;
+      window.localStorage.setItem('audioDeviceId', deviceId);
+    },
+
+    initialAudioSwitch: evt => {
+      publisher.publishAudio(evt.detail.status);
+      publisherOptions.publishAudio = evt.detail.status;
+    },
+
+    initialVideoSwitch: evt => {
+      publisher.publishVideo(evt.detail.status);
+      publisherOptions.publishVideo = evt.detail.status;
+    },
+
+    retest: () => {
+      // TODO 
+      startPrecallTestMeter();
+
+    }
+  };
+}
+
+function startPrecallTestMeter() {
+  const TEST_DURATION_MAX = 200; // 200 seconds
+
+  setSwitchStatus(true, 'Video', 'roomView:initialVideoSwitch');
+
+  PrecallView.initPrecallTestMeter();
+  // TODO
 }
 

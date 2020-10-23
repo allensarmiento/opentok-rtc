@@ -4,6 +4,13 @@ import videoIcon from '../../assets/images/icons/video-icon.svg';
 import micIcon from '../../assets/images/icons/mic-icon.svg';
 import connectivityIcon from '../../assets/images/icons/connectivity-icon.svg';
 
+const DOM = {
+  meterLevel: document.getElementById('precall-test-meter-level'),
+  testStatusLabel: document.querySelector('#test-status label')
+};
+
+////////////////////
+// Initialization
 export function renderPrecallTemplate() {
   document.body.insertAdjacentHTML('beforeend', precallTemplateView());
 }
@@ -135,4 +142,33 @@ export function precallTemplateView() {
     </section>
   `;
 };
+
+export function renderTosTemplate() {
+  document.body.insertAdjacentHTML('beforeend', tosTemplateView());
+}
+
+function tosTemplateView() {
+  return `
+    <section class="tc-modal contract">
+      <form class="tc-dialog">
+        <i data-icon="close_gray" class="close"></i>
+        <header>
+          <span>Terms of Use</span>
+        </header>
+        <p>By accepting our terms of use you acknowledge that you have read the <a target="_blank" href="https://tokbox.com/support/tos">user agreement</a> and <a target="_blank" href="https://tokbox.com/support/privacy-policy">privacy policy</a>, and you are at least 18 years of age.</p>
+        <footer>
+          <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding accept">Accept and Continue</button>
+        </footer>
+      </form>
+    </section>
+  `;
+}
+
+////////////////////
+// 
+export function initPrecallTestMeter() {
+  DOM.testStatusLabel.innerText = 'Testing audio / video quality…';
+  DOM.meterLevel.style.width = 0;
+  DOM.meterLevel.style['animation-play-state'] = 'running';
+}
 
