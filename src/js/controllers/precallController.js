@@ -80,11 +80,24 @@ const publisherOptions = {
 
 let publisher;
 
+let testMeterInterval;
+
+let otNetworkTest;
+
+/**
+ * @param {string} roomName
+ * @param {string} username
+ * @return {object} Video preview event handlers.
+ */
 export function showCallSettingsPrompt(roomName, username, otHelper) {
   const selector = '.user-name-modal'; 
 
 }
 
+/** 
+  * @param {OTHelper} otHelper An instance of OTHelper.
+  * @return {object} Video preview event handlers.
+  */
 function getVideoPreviewEventHandlers(otHelper) {
   return {
     toggleFacingMode: () => {
@@ -113,19 +126,43 @@ function getVideoPreviewEventHandlers(otHelper) {
     },
 
     retest: () => {
-      // TODO 
       startPrecallTestMeter();
+      otNetworkTest.startNetworkTest((error, result) => {
+        if (!error) {
+          displayNetworkTestResults(result);
+        } 
+      });
+    },
 
+    cancelTest: () => {
+      // TODO
     }
   };
 }
 
+
+/** */
 function startPrecallTestMeter() {
   const TEST_DURATION_MAX = 200; // 200 seconds
 
   setSwitchStatus(true, 'Video', 'roomView:initialVideoSwitch');
-
   PrecallView.initPrecallTestMeter();
-  // TODO
+
+  let preCallTestProgress = 0;
+  testMeterInterval = setInterval(function() {
+    preCallTestProgress++; 
+    PrecallView.setTestMeterLevel(preCallTestProgress / TEST_DURATION_MAX);
+    if (preCallTestProgress === TEST_DURATION_MAX) {
+      clearInterval(testMeterInterval);
+    }
+  }, 100);
+}
+
+function displayNetworkTestResults(result) {
+  let packetLossStr;
+
+  clearInterval(testMeterInterval);
+
+  PrecallView.displayNetworkTestResults(result);
 }
 

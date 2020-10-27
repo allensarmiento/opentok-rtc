@@ -20,7 +20,9 @@
     "url": "https://github.com/opentok/opentok-rtc/issues"
   },
   "homepage": "https://github.com/opentok/opentok-rtc/",
-  "dependencies": {},
+  "dependencies": {
+    "@opentok/client": "^2.18.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.12.1",
     "@babel/preset-env": "^7.12.1",

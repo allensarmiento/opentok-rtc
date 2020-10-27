@@ -42,3 +42,11 @@ function addValue(curValue, newValue) {
   return curValue;
 }
 
+export function isIE() {
+  const userAgent = 'userAgent' in navigator 
+    && (navigator.userAgent.toLowerCase() || '');
+
+  return /msie/.test(userAgent) || 
+    userAgent.indexOf('trident/') !== -1;
+}
+

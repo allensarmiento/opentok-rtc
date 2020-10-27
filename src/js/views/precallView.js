@@ -5,8 +5,18 @@ import micIcon from '../../assets/images/icons/mic-icon.svg';
 import connectivityIcon from '../../assets/images/icons/connectivity-icon.svg';
 
 const DOM = {
+  meter: document.getElementById('precall-test-meter'),
   meterLevel: document.getElementById('precall-test-meter-level'),
-  testStatusLabel: document.querySelector('#test-status label')
+  testStatusLabel: document.querySelector('#test-status label'),
+  connectivityCancel: document.querySelector('#connectivity-cancel'),
+  precallTestResults: document.querySelector('#pre-call-test-results'),
+  audioBitrate: document.querySelector('#audio-bitrate'),
+  videoBitrate: document.querySelector('#video-bitrate'),
+  precallVideoPacketLoss: document.querySelector('#precall-video-packet-loss'),
+  precallHeading: document.querySelector('#pre-call-heading'),
+  precallDescription: document.querySelector('#pre-call-description'),
+  precallIcon: document.querySelector('#precall-icon'),
+  precallAudioPacketLoss: document.querySelector('#precall-audio-packet-loss')
 };
 
 ////////////////////
@@ -170,5 +180,51 @@ export function initPrecallTestMeter() {
   DOM.testStatusLabel.innerText = 'Testing audio / video quality…';
   DOM.meterLevel.style.width = 0;
   DOM.meterLevel.style['animation-play-state'] = 'running';
+}
+
+export function setTestMeterLevel(value) {
+  const width = value * DOM.meter.offsetWidth;
+  DOM.meterLevel.style.width = `${width}px`;
+}
+
+export function displayNetworkTestResults(result) {
+  let packetLossStr;
+
+  DOM.testStatusLabel.innerText = 'Done.';
+  DOM.meterLevel.style['animation-play-state'] = 'paused';
+  setTestMeterLevel(1);
+  DOM.connectivityCancel.style.display = 'none';
+  DOM.precallTestResults.style.display = 'block';
+  DOM.audioBitrate.innerText = Math.round(results.audio.bitsPerSecond / 1000);
+
+  if (results.video) {
+    DOM.videoBitrate.innerText = Math.round(results.video.bitsPerSecond / 1000);
+    packetLossStr = isNaN(results.video.packetLossRatio) 
+      ? '' : `${Math.round(100 * results.video.packetLossRatio)}% packet loss`;
+    DOM.precallVideoPacketLoss.innerText = packetLossStr;
+  } else {
+    DOM.videoBitrate.innerText = 0;
+    DOM.precallVideoPacketLoss.innerText = 'No video.';
+  }
+
+  DOM.precallHeading.classList = results.classification;
+
+  switch(results.classification) {
+    case 'precall-tick':
+      DOM.precallHeading.innerText = 'Excellent Connectivity';
+      break;
+    case 'precall-warning':
+      DOM.precallHeading.innerText = 'OK Connectivity';
+      break;
+    case 'precall-error':
+      DOM.precallHeading.innerText = 'Poor Connectivity';
+      break;
+  }
+
+  DOM.precallDescription.innerText = results.text;
+  DOM.precallIcon.setAttribute('data-icon', results.classification);
+  packetLossStr = isNaN(results.audio.packetLossRatio)
+    ? '' : `${Math.round(100 * results.audio.packetLossRatio)}% packet loss`;
+  DOM.precallAudioPacketLoss.innerText = packetLossStr;
 }
 
