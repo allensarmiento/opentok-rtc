@@ -10,16 +10,16 @@ const transEndEventName = ('WebkitTransition' in document.documentElement.style)
 let closeHandlers = {};
 let keyPressHandler;
 
-export function show(selector) {
-  console.log('show called');
+export function show(selector, preShowCb, allowMultiple) {
   let screenFree;
 
   preShowFocusElement = document.activeElement;
+
   if (preShowFocusElement) {
     preShowFocusElement.blur();
   }
 
-  if (!modalShown) {
+  if (!modalShown || allowMultiple) {
     screenFree = Promise.resolve();
   } else {
     screenFree = new Promise(resolve => {
@@ -39,7 +39,7 @@ export function show(selector) {
       });
       // ! I added this here because the modal wouldn't close.
       // ! May need to come back to this.
-      addCloseHandler(selector);
+      // addCloseHandler(selector);
 
       modal.classList.add('visible');
       modal.classList.add('show');

@@ -1,5 +1,8 @@
+import axios from 'axios';
 import * as PrecallView from '../views/precallView';
+import * as Modal from '../components/modal';
 import * as Events from '../state/events';
+import * as BrowserUtils from '../utils/browserUtils';
 
 ////////////////////
 // Initialization
@@ -68,6 +71,12 @@ function setSwitchStatus(status, switchName, eventName) {
 
 ////////////////////
 //  
+const DOM = {
+  enter: document.querySelector('.user-name-modal #enter'),
+  userNameModal: document.querySelector('.user-name-modal'),
+  tcDialog: document.querySelector('.user-name-modal .tc-dialog')
+};
+
 const publisherOptions = {
   publishAudio: true,
   publishVideo: true,
@@ -78,10 +87,9 @@ const publisherOptions = {
   showControls: false,
 };
 
+let previewOptions;
 let publisher;
-
 let testMeterInterval;
-
 let otNetworkTest;
 
 /**
@@ -91,7 +99,11 @@ let otNetworkTest;
  */
 export function showCallSettingsPrompt(roomName, username, otHelper) {
   const selector = '.user-name-modal'; 
+  const videoPreviewEventHandlers = this.getVideoPreviewEventHandlers(otHelper);
 
+  return new Promise(resolve => {
+    // TODO
+  });
 }
 
 /** 
@@ -135,7 +147,8 @@ function getVideoPreviewEventHandlers(otHelper) {
     },
 
     cancelTest: () => {
-      // TODO
+      PrecallView.hideConnectivityTest();
+      otNetworkTest.stopTest();
     }
   };
 }
@@ -158,11 +171,109 @@ function startPrecallTestMeter() {
   }, 100);
 }
 
+/** */
 function displayNetworkTestResults(result) {
   let packetLossStr;
-
   clearInterval(testMeterInterval);
-
   PrecallView.displayNetworkTestResults(result);
+}
+
+/** */
+function loadModalText(roomName, username, otHelper) {
+  PrecallView.setRoomName(roomName);
+  PrecallView.setUsername(username);
+  PrecallView.setFocus(username);
+
+  if (BrowserUtils.isIE() || BrowserUtils.isSafariIOS()) {
+    PrecallView.hideConnectivityTest();
+  }
+
+  DOM.enter.disabled = false;
+  DOM.userNameModal.addEventListener('keypress', event => {
+    if (event.which === 13) {
+      event.preventDefault();
+      submitForm();
+    }
+  });
+
+  DOM.tcDialog.addEventListener('submit', event => {
+    event.preventDefault();
+    submitForm();
+  });
+
+  otHelper.initPublisher('video-preview', publisherOptions)
+    .then(pub => {
+      publisher = pub;
+
+      otHelper.getVideoDeviceNotInUse(publisherOptions.videoSource)
+        .then(videoSourceId => {
+          getCredentials().then(credentials => {
+            previewOptions = {
+              apiKey: credentials.apiKey,
+              sessionId: credentials.sessionId,
+              token: credentials.token
+            };
+
+            publisher.on('accessAllowed', () => {
+              otHelper.getDevices('audioInput').then(audioDevs => {
+                PrecallView.populateAudioDevicesDropdown(
+                  audioDevs, publisherOptions, audioSource);
+
+                // You cannot use the network test in IE or Safari because you
+                // cannot use two publishers (the preview publisher and the 
+                // network test publisher) simultaneously.
+                // TODO
+              });
+            });
+          });
+        });
+    });
+  // TODO
+}
+
+function submitForm(showTos, selector) {
+  if (showTos) {
+    PrecallView.showContract().then(() => void hidePrecall(selector));
+  } else {
+    hidePrecall(selector);
+  }
+}
+
+function hidePrecall(selector) {
+  PrecallView.hide();
+
+  if (publisher) {
+    publisher.destroy();
+  }
+
+  if (!BrowserUtils.isIE() && otNetworkTest) {
+    otNetworkTest.stopTest();
+  }
+
+  Modal.hide(selector)
+    .then(() => {
+      const username = document.querySelector(`${selector} input`).value.trim();
+
+      window.localStorage.setItem('username', username);
+      publisherOptions.name = username;
+
+      setTimeout(() => {
+        resolve({ username, publisherOptions });
+      }, 1);
+    });
+}
+
+function getCredentials() {
+  return new Promise((resolve, reject) => {
+    axios.post('/precall').then(data => {
+      if (!data) reject();
+
+      resolve({
+        apiKey: data.apiKey,
+        sessionId: data.sessionId,
+        token: data.token
+      });
+    });
+  });
 }
 

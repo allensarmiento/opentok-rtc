@@ -391,7 +391,6 @@ class OTNetworkTest() {
     }
 
     // try audio only to see if it reduces the packet loss
-    // TODO
     this.publisher.publishVideo(false);
 
     this.performQualityTest({ subscriber, timeout: 5000 }, (error, results) => {
@@ -415,6 +414,22 @@ class OTNetworkTest() {
         video: results.video
       });
     });
+  }
+
+  /** */
+  stopTest() {
+    if (this.bandwidthCalculator) {
+      this.bandwidthCalculator.stop();
+    }
+
+    try {
+      this.session.unpublish(this.publisher);
+      this.session.disconnect();
+    } catch(error) {
+      // Probably not connected yet.
+    }
+
+    this.publisher.destroy();
   }
 }
 

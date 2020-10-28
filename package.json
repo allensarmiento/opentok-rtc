@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/opentok/opentok-rtc/",
   "dependencies": {
-    "@opentok/client": "^2.18.1"
+    "@opentok/client": "^2.18.1",
+    "axios": "^0.21.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.1",

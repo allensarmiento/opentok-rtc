@@ -1,3 +1,4 @@
+import * as Modal from '../components/modal';
 import * as Events from '../state/events';
 import tokboxNexmoLogo from '../../assets/images/new-vonage-logo.png';
 import videoIcon from '../../assets/images/icons/video-icon.svg';
@@ -5,6 +6,7 @@ import micIcon from '../../assets/images/icons/mic-icon.svg';
 import connectivityIcon from '../../assets/images/icons/connectivity-icon.svg';
 
 const DOM = {
+  precallTest: document.getElementById('pre-call-test');
   meter: document.getElementById('precall-test-meter'),
   meterLevel: document.getElementById('precall-test-meter-level'),
   testStatusLabel: document.querySelector('#test-status label'),
@@ -16,7 +18,17 @@ const DOM = {
   precallHeading: document.querySelector('#pre-call-heading'),
   precallDescription: document.querySelector('#pre-call-description'),
   precallIcon: document.querySelector('#precall-icon'),
-  precallAudioPacketLoss: document.querySelector('#precall-audio-packet-loss')
+  precallAudioPacketLoss: document.querySelector('#precall-audio-packet-loss'),
+
+  roomName: document.querySelector('.user-name-modal button .room-name'),
+  nameHeading: document.getElementById('name-heading'),
+  videoPreviewName: document.getElementById('video-preview-name'),
+  enter: document.getElementById('enter'),
+  userNameInput: document.getElementById('user-name-input'),
+
+  acceptElement: document.querySelector('.tc-modal.contract .accept'),
+
+  selectDevices: document.getElementById('select-devices');
 };
 
 ////////////////////
@@ -226,5 +238,66 @@ export function displayNetworkTestResults(result) {
   packetLossStr = isNaN(results.audio.packetLossRatio)
     ? '' : `${Math.round(100 * results.audio.packetLossRatio)}% packet loss`;
   DOM.precallAudioPacketLoss.innerText = packetLossStr;
+}
+
+export function hideConnectivityTest() {
+  DOM.precallTest.style.display = 'none';
+  DOM.meter.style.display = 'none';
+}
+
+////////////////////
+// 
+export function setRoomName(roomName) {
+  DOM.roomName.textContent = `Join ${roomName}`;
+  DOM.nameHeading.textContent = roomName;
+}
+
+export function setUsername(username) {
+  DOM.videoPreviewName.textContent = username;
+  setTimeout(() => void DOM.videoPreviewName.style.opacity = 0, 2000);
+}
+
+export function setFocus(username) {
+  const focusElement = username ? DOM.enter : DOM.userNameInput;
+  focusElement.focus();
+}
+
+export function showContract() {
+  const selector = '.tc-modal.contract';
+
+  const onClicked = evt => {
+    DOM.acceptElement.removeEventListener('click', onClicked);
+    evt.preventDefault();
+    sessionStorage.setItem('tosAccepted', true);
+    Modal.hide(selector);
+    resolve();
+  };
+
+  return Modal.show(selector, null, true)
+    .then(() => {
+      return new Promise(resolve => {
+        DOM.acceptElement.addEventListener('click', onClicked);
+        Events.addEventHandler('modal:close', showModal);
+      });
+    });
+}
+
+function showModal() {
+  Events.removeEventHandler('modal:close', showModal);
+  Modal.show('.user-name-modal');
+}
+
+export function populateAudioDevicesDropdown(audioDevices, selectedDeviceId) {
+  audioDevices.forEach(device => {
+    const option = document.createElement('option');
+    option.text = device.label;
+    option.value = device.deviceId;
+
+    if (option.value === selectedDeviceId) {
+      option.selected = true;
+    }
+
+    DOM.selectDevices.appendChild(option);
+  });
 }
 
