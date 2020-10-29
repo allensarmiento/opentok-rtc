@@ -38,6 +38,43 @@ class OTHelper {
       });
     });
   }
+
+  initPublisher(domEl, properties, handlers) {
+    return new Promise(resolve => {
+      this.getFilteredSources({
+        audioSource: properties.audioSource,
+        videoSource: properties.videoSource
+      }).then(mediaSources => {
+        Object.assign(properties, mediaSources);
+        this._publisher = OT.initPublisher(domEl, properties);
+        return resolve(this._publisher);
+      });
+    });
+  }
+
+  getFilteredSources(mediaDeviceIds) {
+    return new Promise((resolve, reject) => {
+      this.getDevices().then(devices => {
+        for (let source in mediaDeviceIds) {
+          const matchingDevice = devices.find(device => 
+            device.deviceId === mediaDeviceIds[source]);
+
+          if (!matchingDevice) {
+            mediaDeviceIds[source] = 
+              this.getFallbackMediaDeviceId(devices, source);
+          }
+
+          return resolve(mediaDeviceIds);
+        }
+      }).catch(e => reject(e));
+    });
+  }
+
+  getFallbackMediaDeviceId(devices, kind) {
+    kind = kind.replace('Source', 'Input');
+    const matchingDevice = devices.find(device => device.kind === kind);
+    return matchingDevice ? matchingDevice.deviceId : null;
+  }
 }
 
 export default OTHelper;

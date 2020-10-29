@@ -433,5 +433,5 @@ class OTNetworkTest() {
   }
 }
 
-export default OTNetworkTest;
+export OTNetworkTest;
 

@@ -28,7 +28,9 @@ const DOM = {
 
   acceptElement: document.querySelector('.tc-modal.contract .accept'),
 
-  selectDevices: document.getElementById('select-devices');
+  selectDevices: document.getElementById('select-devices'),
+
+  audioMeterLevel: document.getElementById('audio-meter-level')
 };
 
 ////////////////////
@@ -299,5 +301,9 @@ export function populateAudioDevicesDropdown(audioDevices, selectedDeviceId) {
 
     DOM.selectDevices.appendChild(option);
   });
+}
+
+export function setVolumeMeterLevel(level) {
+  DOM.audioMeterLevel.style.width = `${(level * 89)}px`;
 }
 

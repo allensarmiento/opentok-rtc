@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as PrecallView from '../views/precallView';
 import * as Modal from '../components/modal';
+import { OTNetworkTest } from '../helpers/OTNetworkTest';
 import * as Events from '../state/events';
 import * as BrowserUtils from '../utils/browserUtils';
 
@@ -101,9 +102,9 @@ export function showCallSettingsPrompt(roomName, username, otHelper) {
   const selector = '.user-name-modal'; 
   const videoPreviewEventHandlers = this.getVideoPreviewEventHandlers(otHelper);
 
-  return new Promise(resolve => {
-    // TODO
-  });
+  return Modal
+    .show(selector, () => void loadModalText(roomName, username, otHelper))
+    .then(() => void PrecallView.setFocus(username));
 }
 
 /** 
@@ -222,13 +223,81 @@ function loadModalText(roomName, username, otHelper) {
                 // You cannot use the network test in IE or Safari because you
                 // cannot use two publishers (the preview publisher and the 
                 // network test publisher) simultaneously.
-                // TODO
+                if (!BrowserUtils.isIE() && !BrowserUtils.isSafariIOS()) {
+                  startPrecallTestMeter();
+
+                  otNetworkTest = new OTNetworkTest(previewOptions);
+                  otNetworkTest.startNetworkTest((error, result) => {
+                    displayNetworkTestResults(result);
+
+                    if (result.audioOnly) {
+                      publisher.publishVideo(false);
+                      Events.sendEvent('PrecallController:audioOnly');
+                    }
+                  });
+                }
               });
+            });
+
+            Events.addEventEventHandler('roomView:toggleFacingMode', () => {
+              otHelper.toggleFacingMode().then(dev => {
+                const deviceId = dev.deviceId;
+                publisherOptions.videoSource = deviceId;
+                window.localStorage.setItem('videoDeviceId', deviceId);
+              });
+            });
+
+            Events.addEventEventHandler('roomView:setAudioSource', evt => {
+              const deviceId = evt.detail;
+              otHelper.setAudioSource(deviceId);
+              publisherOptions.audioSource = deviceId;
+              window.localStorage.setItem('audioDeviceId', deviceId);
+            });
+
+            Events.addEventEventHandler('roomView:initialAudioSwitch', evt => {
+              const status = evt.detail.status;
+              publisher.publishAudio(status);
+              publisherOptions.publishAudio = status;
+            });
+
+            Events.addEventEventHandler('roomView:initialVideoSwitch', evt => {
+              const status = evt.detail.status;
+              publisher.publishVideo(status);
+              publisherOptions.publishVideo = status;
+            });
+
+            Events.addEventEventHandler('roomView:retest', () => {
+              startPrecallTestMeter();
+
+              otNetworkTest.startNetworkTest((error, result) => {
+                if (!error) {
+                  displayNetworkTestResults();
+                }
+              });
+            });
+
+            Events.addEventEventHandler('roomView:cancelTest', () => {
+              hideConnectivityTest();
+              otNetworkTest.stopTest();
+            });
+
+            let movingAvg = null;
+            publisher.on('audioLevelUpdated', event => {
+              if (movingAvg === null || movingAvg <= event.audioLevel) {
+                movingAvg = event.audioLevel;
+              } else {
+                movingAvg = (0.8 * movingAvg) + (0.2 * event.audioLevel);
+              }
+
+              // 1.5 scaling to map the -30 - 0 dBm range to [0,1]
+              let logLevel = ( (Math.log(movingAvg) / Math.LN10) / 1.5 ) + 1;
+              logLevel = Math.min(Math.max(logLevel, 0), 1);
+
+              PrecallView.setVolumeMeterLevel(logLevel);
             });
           });
         });
     });
-  // TODO
 }
 
 function submitForm(showTos, selector) {

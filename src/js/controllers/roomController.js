@@ -1,4 +1,5 @@
-import * as PrecallController from '../controllers/precallController';
+import * as PrecallController from './precallController';
+import * as RoomView from '../views/roomView';
 import OTHelper from '../helpers/OTHelper';
 import * as Utils from '../utils/browserUtils';
 
@@ -40,7 +41,13 @@ function getRoomParams() {
   roomVariables.enableHangoutScroll = 
     params.getFirstValue('enableHangoutScroll') !== undefined;
 
-  // TODO: PrecallController.showCallSettingsPrompt
+  PrecallController
+    .showCallSettingsPrompt(roomName, usrId, otHelper).then(info => {
+      info.roomURI = roomURI;
+
+      RoomView.showRoom();
+      // TODO RoomView.roomName = roomName;
+    });
 }
 
 /**
