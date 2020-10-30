@@ -1,3 +1,5 @@
+import * as HtmlElems from '../components/htmlElems';
+
 const DOM = {
   dock: document.getElementById('top-banner'),
   callControlsElem: document.querySelector('.call-controls'),
@@ -16,7 +18,7 @@ const DOM = {
   manageRecordingsElem: document.getElementById('manageRecordings'),
   messageButtonElem: document.getElementById('message-btn'),
   topBannerElem: document.getElementById('top-banner'),
-  screenElem: document.getElementById('screen')
+  screenElem: document.getElementById('screen'),
 };
 
 let overCallControls = false;
@@ -24,6 +26,10 @@ let hideCallControlsTimer;
 
 let overFeedbackButton = false;
 let hideFeedbackButtonTimer;
+
+// NOTE: These may not be used.
+let roomName = '';
+let roomURI = '';
 
 /** */
 export function showRoom() {
@@ -89,5 +95,22 @@ function showFeedbackButton() {
 function hideFeedbackButton() {
   hideFeedbackButtonTimer = null;
   feedbackButton.classList.remove('visible');
+}
+
+/** 
+ * @param {string} room
+ */
+export function setRoomName(room) {
+  HtmlElems.addText(DOM.roomNameElem, room);
+
+  // NOTE: Shouldn't be needed.
+  roomName = room;
+}
+
+/**
+ * @param {string} uri
+ */
+export function setRoomURI(uri) {
+  roomURI = uri;
 }
 
