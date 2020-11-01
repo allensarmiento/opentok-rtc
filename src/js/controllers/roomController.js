@@ -23,7 +23,9 @@ const roomVariables = {
   roomURI: null,
 
   resolutionAlgorithm: null,
-  debugPreferredResolution: null
+  debugPreferredResolution: null,
+
+  subscriberStreams: {}
 };
 
 export function init() {
@@ -48,8 +50,22 @@ export function init() {
         sendArchivingOperation(operation);
       });
       Events.addEventHandler('roomView:stopArchiving', () => {
-        // TODO
+        sendArchivingOperation('stop');
       });
+      Events.addEventHandler('roomView:streamVisibilityChange', evt => {
+        const streamId = evt.detail.id;
+        if (streamId !== 'publisher') {
+          const stream = roomVariables.subscriberStreams[streamId];
+          if (stream) {
+            roomVariables.otHelper.toggleSubscribersVideo(
+              stream.stream, getStatus(stream.buttons.video));
+          }
+        }
+      });
+      Events.addEventHandler('roomView:buttonClick', evt => {
+       
+      });
+      // TODO
     });
   // ...
 }
@@ -163,5 +179,23 @@ function sendArchivingOperation(operation) {
     roomName: roomVariables.roomURI,
     operation
   });
+}
+
+/**
+ * @param {HTMLEvent} event
+ * @param {object} info
+ */
+function getStatus(event, info) {
+  let status = null;
+
+  if (event.detail.value === 'hidden') {
+    info.prevEnabled = 'prevEnabled' in info ? info.prevEnabled : info.enabled;
+    status = false;
+  } else {
+    status = 'prevEnabled' in info ? info.prevEnabled : info.enabled;
+    delete info.prevEnabled;
+  }
+
+  return status;
 }
 

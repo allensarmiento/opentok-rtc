@@ -75,6 +75,19 @@ class OTHelper {
     const matchingDevice = devices.find(device => device.kind === kind);
     return matchingDevice ? matchingDevice.deviceId : null;
   }
+
+  toggleSubscribersVideo(stream, value) {
+    this.subscribeTo(stream, 'Video', value);
+  }
+
+  subscribeTo(stream, name, value) {
+    const arrSubscribers = this._session.getSubscribersForStream(stream);
+    // TODO Currently we expect only one element in arrSubscriber
+    if (Array.isArray(arrSubscriber)) {
+      arrSubscribers.forEach(subscriber => 
+        void subscriber[`subscribeTo${name}`](value));
+    }
+  }
 }
 
 export default OTHelper;
