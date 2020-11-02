@@ -88,6 +88,52 @@ class OTHelper {
         void subscriber[`subscribeTo${name}`](value));
     }
   }
+
+  isPublisherReady() {
+    return this._publisherInitialized;
+  }
+
+  publisherHas(type) {
+    return this._publisher.stream[
+      `has${type.toLowerCase() === 'audio' && 'Audio' || 'Video'}`];
+  }
+
+  sendSignal(type, msgData, to) {
+    let messageOrder = 0;
+
+    // Multipart message sending process. This is expected to be the
+    // acutal session.
+    return new Promise((resolve, reject) => {
+      const msg = { type, data: msgData && JSON.stringify(msgData) };
+      const msgId = ++messageOrder;
+      // TODO
+    });
+
+    // TODO
+  }
+
+  _composeSegment(msgId, segmentOrder, totalSegments, userMsg) {
+    const obj = {
+      type: userMsg.type,
+      data: JSON.stringify({
+        _head: {
+          id: msgId,
+          seq: segmentOrder,
+          tot: totalSegments
+        },
+        data: userMsg.data 
+          ? userMsg.data.substr(
+            segmentOrder * USER_DATA_SIZE, USER_DATA_SIZE) 
+          : ''
+      })
+    };
+
+    if (userMsg.to) {
+      obj.to = userMsg.to;
+    }
+
+    return obj;
+  }
 }
 
 export default OTHelper;

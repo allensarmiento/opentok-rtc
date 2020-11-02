@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as PrecallView from '../views/precallView';
 import * as Modal from '../components/modal';
-import { OTNetworkTest } from '../helpers/OTNetworkTest';
+import OTNetworkTest from '../helpers/OTNetworkTest';
 import * as Events from '../state/events';
 import * as BrowserUtils from '../utils/browserUtils';
 
@@ -239,7 +239,7 @@ function loadModalText(roomName, username, otHelper) {
               });
             });
 
-            Events.addEventEventHandler('roomView:toggleFacingMode', () => {
+            Events.addEventHandler('roomView:toggleFacingMode', () => {
               otHelper.toggleFacingMode().then(dev => {
                 const deviceId = dev.deviceId;
                 publisherOptions.videoSource = deviceId;
@@ -247,26 +247,26 @@ function loadModalText(roomName, username, otHelper) {
               });
             });
 
-            Events.addEventEventHandler('roomView:setAudioSource', evt => {
+            Events.addEventHandler('roomView:setAudioSource', evt => {
               const deviceId = evt.detail;
               otHelper.setAudioSource(deviceId);
               publisherOptions.audioSource = deviceId;
               window.localStorage.setItem('audioDeviceId', deviceId);
             });
 
-            Events.addEventEventHandler('roomView:initialAudioSwitch', evt => {
+            Events.addEventHandler('roomView:initialAudioSwitch', evt => {
               const status = evt.detail.status;
               publisher.publishAudio(status);
               publisherOptions.publishAudio = status;
             });
 
-            Events.addEventEventHandler('roomView:initialVideoSwitch', evt => {
+            Events.addEventHandler('roomView:initialVideoSwitch', evt => {
               const status = evt.detail.status;
               publisher.publishVideo(status);
               publisherOptions.publishVideo = status;
             });
 
-            Events.addEventEventHandler('roomView:retest', () => {
+            Events.addEventHandler('roomView:retest', () => {
               startPrecallTestMeter();
 
               otNetworkTest.startNetworkTest((error, result) => {
@@ -276,7 +276,7 @@ function loadModalText(roomName, username, otHelper) {
               });
             });
 
-            Events.addEventEventHandler('roomView:cancelTest', () => {
+            Events.addEventHandler('roomView:cancelTest', () => {
               hideConnectivityTest();
               otNetworkTest.stopTest();
             });

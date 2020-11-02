@@ -1,6 +1,7 @@
 import * as LandingView from '../views/landingView';
 import * as Modal from '../components/modal';
 import * as Events from '../state/events';
+import { Landing } from '../models/landingModel';
 
 /* NOTE:
  *
@@ -13,10 +14,7 @@ import * as Events from '../state/events';
  * Haven't tested if username is available in localStorage
  */
 
-const landingVariables = {
-  isWebRTCVersion: false,
-  showTos: false
-};
+const landing = new Landing();
 
 const DOM = {
   enterButton: document.querySelector('#enter'),
@@ -51,15 +49,13 @@ export function init() {
   }
 }
 
-/**
- * Sets handlers and resets forms
- */
+/** Sets handlers and resets forms */
 function startApp() {
   document.body.classList.remove('forbidden');
 
-  LandingView.addHeader(landingVariables.isWebRTCVersion);
+  LandingView.addHeader(landing.isWebRTCVersion);
 
-  if (landingVariables.showTos) {
+  if (landing.showTos) {
     LandingView.loadTosTemplate();
   }
 
@@ -68,9 +64,7 @@ function startApp() {
   addHandlers();
 }
 
-/**
- * Resets all form fields and add event listeners
- */
+/** Resets all form fields and add event listeners */
 function resetForm() {
   const fields = document.querySelectorAll('form input');
   Array.prototype.map.call(fields, function(field) {
@@ -83,6 +77,7 @@ function resetForm() {
   });
 }
 
+/** */
 function setUsernameFromLocalStorage() {
   const storedUsername = window.localStorage.getItem('username');
   if (storedUsername) {
@@ -91,11 +86,13 @@ function setUsernameFromLocalStorage() {
   }
 }
 
+/** */
 function onKeyup() {
   DOM.roomLabel.classList.add('visited');
   DOM.room.removeEventListener('keyup', onFocus)
 }
 
+/** */
 function onFocus() {
   // this.id comes from the focus element id
   if (this.id === 'room') {
@@ -114,13 +111,12 @@ function onFocus() {
   }
 }
 
-/**
- * Handle enter room clicked
- */
+/** Handle enter room clicked */
 function addHandlers() {
   DOM.enterButton.addEventListener('click', onEnterClicked);
 }
 
+/** */
 function onEnterClicked(event) {
   event.preventDefault();
   event.stopImmediatePropagation();
@@ -135,7 +131,7 @@ function onEnterClicked(event) {
   DOM.form.classList.remove('error');
   DOM.enterButton.removeEventListener('click', onEnterClicked);
 
-  if (landingVariables.showTos) {
+  if (landing.showTos) {
     showContract().then(accepted => {
       if (accepted) {
         sessionStorage.setItem('tosAccepted', true);
@@ -173,9 +169,7 @@ function isValid() {
   return formValid;
 }
 
-/**
- * Show the contract by using the modal component 
- */
+/** Show the contract by using the modal component */
 function showContract() {
   const selector = '.tc-modal.contract';
   const acceptElement = document.querySelector(`${selector} .accept`);
@@ -198,9 +192,7 @@ function showContract() {
     });
 }
 
-/**
- * Navigate to the room page by changing the url
- */
+/** Navigate to the room page by changing the url */
 function navigateToRoom() {
   const base = window.location.href.replace(/([^/]+)\.[^/]+$/, '');
   let url = base.concat('room/', encodeURIComponent(DOM.room.value));
@@ -213,4 +205,3 @@ function navigateToRoom() {
   resetForm();
   window.location.href = url;
 }
-

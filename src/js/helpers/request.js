@@ -41,3 +41,11 @@ function composeData(data) {
   return composed.join('');
 }
 
+/**
+ * @param {string} phoneNumber 
+ * @param {string} token 
+ */
+export function hangUp(phoneNumber, token) {
+  return axios.post(`${server}/hang-up/`, { 
+    phoneNumber, googleIdToken: token });
+}

@@ -4,36 +4,16 @@ import OTHelper from '../helpers/OTHelper';
 import * as Request from '../helpers/request';
 import * as Events from '../state/events';
 import * as Utils from '../utils/browserUtils';
+import Room from '../models/roomModel';
 
-const roomVariables = {
-  showTos: false,
-
-  otHelper: null,
-
-  resolutionAlgorithm: null,
-  debugPreferredResolution: null,
-  enableHangoutScroll: false,
-
-  enableAnnotations: true,
-  enableArchiveManager: false,
-  enableSip: false,
-  requireGoogleAuth: false, // For SIP dial-out
-
-  userName: null,
-  roomURI: null,
-
-  resolutionAlgorithm: null,
-  debugPreferredResolution: null,
-
-  subscriberStreams: {}
-};
+const room = new Room();
 
 export function init() {
   // Init PrecallController
-  PrecallController.init(roomVariables.showTos);
+  PrecallController.init(room.showTos);
   // Load OTHelper
   // Create OTHelper instance
-  roomVariables.otHelper = new OTHelper();
+  room.otHelper = new OTHelper();
   // Get Room Parameters
   getRoomParams()
     .then(info => getRoomInfo(info))
@@ -42,26 +22,7 @@ export function init() {
       return params;
     })
     .then(params => {
-      Events.addEventHandler('roomView:endCall', () => 
-        void roomVariables.otHelper.disconnect());
-      Events.addEventHandler('roomView:startArchiving', evt => {
-        const detailOperation = evt.detail && evt.detail.operation;
-        const operation = detailOperation || 'startComposite';
-        sendArchivingOperation(operation);
-      });
-      Events.addEventHandler('roomView:stopArchiving', () => {
-        sendArchivingOperation('stop');
-      });
-      Events.addEventHandler('roomView:streamVisibilityChange', evt => {
-        const streamId = evt.detail.id;
-        if (streamId !== 'publisher') {
-          const stream = roomVariables.subscriberStreams[streamId];
-          if (stream) {
-            roomVariables.otHelper.toggleSubscribersVideo(
-              stream.stream, getStatus(stream.buttons.video));
-          }
-        }
-      });
+      room.addEventHandlers();
       Events.addEventHandler('roomView:buttonClick', evt => {
        
       });
@@ -83,11 +44,11 @@ function getRoomParams() {
   const usrId = params.getFirstValue('userName');
 
   // Room variables
-  roomVariables.resolutionAlgorithm = 
+  room.resolutionAlgorithm = 
     params.getFirstValue('resolutionAlgorithm');
-  roomVariables.debugPreferredResolution = 
+  room.debugPreferredResolution = 
     params.getFirstValue('debugPreferredResolution');
-  roomVariables.enableHangoutScroll = 
+  room.enableHangoutScroll = 
     params.getFirstValue('enableHangoutScroll') !== undefined;
 
   // Startup precall controller 
@@ -163,10 +124,10 @@ function getRoomInfo(roomParams) {
       roomInfo.publishAudio = roomParams.publishAudio;
       roomInfo.publishVideo = roomParams.publishVideo;
       
-      roomVariables.enableAnnotations = roomInfo.enableAnnotation;
-      roomVariables.enableArchiveManager = roomInfo.enableArchiveManager;
-      roomVariables.enableSip = roomInfo.enableSip;
-      roomVariables.requireGoogleAuth = roomInfo.requireGoogleAuth;  
+      room.enableAnnotations = roomInfo.enableAnnotation;
+      room.enableArchiveManager = roomInfo.enableArchiveManager;
+      room.enableSip = roomInfo.enableSip;
+      room.requireGoogleAuth = roomInfo.requireGoogleAuth;  
 
       return roomInfo;
     });
@@ -175,8 +136,8 @@ function getRoomInfo(roomParams) {
 /** @param {string} operation */
 function sendArchivingOperation(operation) {
   Request.sendArchivingOperation({
-    userName: roomVariables.userName,
-    roomName: roomVariables.roomURI,
+    userName: room.userName,
+    roomName: room.roomURI,
     operation
   });
 }

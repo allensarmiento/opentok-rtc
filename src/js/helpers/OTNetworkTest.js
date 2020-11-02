@@ -9,7 +9,7 @@ import * as BrowserUtils from '../utils/browserUtils';
 
 const TEST_TIMEOUT_MS = 15000; // 15 seconds
 
-class OTNetworkTest() {
+class OTNetworkTest {
   /**
    * @param {object} options Options for publisher instance.
    */
@@ -130,7 +130,7 @@ class OTNetworkTest() {
    * @param {array} fns Array of function names
    * @param {function} callback
    */
-  function compositeOfCallbacks(obj, fns, callback) {
+  compositeOfCallbacks(obj, fns, callback) {
     let results = {};
     let hasError = false;
 
@@ -188,7 +188,7 @@ class OTNetworkTest() {
     );
 
     // Start the test.
-    this.bandwidthCalculator.start(stats => void this.currentStats = stats);
+    this.bandwidthCalculator.start(stats => { this.currentStats = stats });
   }
 
   /**
@@ -223,7 +223,7 @@ class OTNetworkTest() {
         let sampleWindowSize;
 
         activeMediaTypes.forEach(type => {
-          snapshot[type] = Object.keys(stats[type]).reduce(result, key) => {
+          snapshot[type] = Object.keys(stats[type]).reduce((result, key) => {
             result[key] = stats[type][key] - (last[type][key] || 0);
             last[type][key] = stats[type][key];
             return result;
@@ -276,7 +276,7 @@ class OTNetworkTest() {
   /**
    * @param {array} arr
    */
-  function min(arr) {
+  min(arr) {
     return Math.min.apply(undefined, arr);
   }
 
@@ -285,7 +285,7 @@ class OTNetworkTest() {
    * @param {number} seconds
    * @return {object} Stats.
    */
-  function calculatePerSecondStats(statsBuffer, seconds) {
+  calculatePerSecondStats(statsBuffer, seconds) {
     let stats = {};
     let activeMediaTypes = Object.keys(statsBuffer[0] || {})
       .filter(key => key !== 'timestamp');
@@ -310,7 +310,7 @@ class OTNetworkTest() {
    * @param {array} arr
    * @param {string} propertyName
    */
-  function sum(arr, propertyName) {
+  sum(arr, propertyName) {
     if (typeof propertyName !== 'undefined') {
       arr = this.pluck(arr, propertyName);
     }
@@ -319,7 +319,7 @@ class OTNetworkTest() {
   }
 
   /** */
-  function stop() {
+  stop() {
     window.clearInterval(this.getStatsIntervalId);
     window.clearTimeout(this.testTimeoutId);
   }
@@ -327,7 +327,7 @@ class OTNetworkTest() {
   /** 
    * @param {number} startMs
    */
-  function cleanupAndReport(startMs, callback) {
+  cleanupAndReport(startMs, callback) {
     this.currentStats.elapsedTimeMs = new Date().getTime() - startMs;
 
     this.bandwidthCalculator.stop();
@@ -340,7 +340,7 @@ class OTNetworkTest() {
    * @param {function} callback
    * @return {function}
    */
-  function evaluateResults(results, callback) {
+  evaluateResults(results, callback) {
     // If we tried to set video constraints, but no video was found.
     if (!results.video) {
       const audioSupported = results.audio.bitsPerSecond > 25000 && 
@@ -433,5 +433,4 @@ class OTNetworkTest() {
   }
 }
 
-export OTNetworkTest;
-
+export default OTNetworkTest;

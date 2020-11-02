@@ -6,7 +6,7 @@ import micIcon from '../../assets/images/icons/mic-icon.svg';
 import connectivityIcon from '../../assets/images/icons/connectivity-icon.svg';
 
 const DOM = {
-  precallTest: document.getElementById('pre-call-test');
+  precallTest: document.getElementById('pre-call-test'),
   meter: document.getElementById('precall-test-meter'),
   meterLevel: document.getElementById('precall-test-meter-level'),
   testStatusLabel: document.querySelector('#test-status label'),
@@ -22,6 +22,7 @@ const DOM = {
 
   roomName: document.querySelector('.user-name-modal button .room-name'),
   nameHeading: document.getElementById('name-heading'),
+  videoPreview: document.getElementById('video-preview'),
   videoPreviewName: document.getElementById('video-preview-name'),
   enter: document.getElementById('enter'),
   userNameInput: document.getElementById('user-name-input'),
@@ -256,7 +257,7 @@ export function setRoomName(roomName) {
 
 export function setUsername(username) {
   DOM.videoPreviewName.textContent = username;
-  setTimeout(() => void DOM.videoPreviewName.style.opacity = 0, 2000);
+  setTimeout(() => { DOM.videoPreviewName.style.opacity = 0 }, 2000);
 }
 
 export function setFocus(username) {
@@ -307,3 +308,7 @@ export function setVolumeMeterLevel(level) {
   DOM.audioMeterLevel.style.width = `${(level * 89)}px`;
 }
 
+export function hide() {
+  DOM.videoPreview.style.visibility = 'hidden';
+  Events.removeEventHandler('modal:close', showModal);
+}
