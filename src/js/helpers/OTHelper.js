@@ -5,6 +5,15 @@ class OTHelper {
     this._session = null;
     this._publisher = null;
     this._publisherInitialized = false;
+
+    this._publishOptions = null;
+    // We will use this in case the first publish fails. On the error we
+    // will give the caller a promise that will fulfill when/if the
+    // publish succeeds at the same future time (because of a retry).
+    this._solvePublisherPromise;
+    this._publisherPromise = new Promise(resolve => {
+      this._solvePublisherPromise = resolve;
+    });
   }
 
   toggleFacingMode() {
@@ -106,10 +115,29 @@ class OTHelper {
     return new Promise((resolve, reject) => {
       const msg = { type, data: msgData && JSON.stringify(msgData) };
       const msgId = ++messageOrder;
-      // TODO
-    });
+      const totalSegments = msg.data 
+        ? Math.ceil(msg.data.length / USER_DATA_SIZE) : 1;
+      const messagesSent = [];
 
-    // TODO
+      for (let segmentOrder = 0; segmentOrder < totalSegments; segmentOrder++) {
+        const signalData = 
+          this._composeSegment(msgId, segmentOrder, totalSegments, msg);
+        
+          if (to) {
+            signalData.to = to;
+          }
+
+          messagesSent[segmentOrder] = 
+            new Promise((resolveMessage, rejectMessage) => {
+              this._session.signal(signalData, error => {
+                if (error) rejectMessage(error);
+                else resolveMessage();
+              });
+            });
+      }
+
+      Promise.all(messagesSent).then(resolve).catch(reject);
+    });
   }
 
   _composeSegment(msgId, segmentOrder, totalSegments, userMsg) {
@@ -134,7 +162,81 @@ class OTHelper {
 
     return obj;
   }
+
+  togglePublisherAudio(value) {
+    return this._togglePublisherProperty('Audio', value);
+  }
+
+  _togglePublisherProperty(property, value) {
+    this.publisherReady().then(publisher => {
+      publisher[`publish${property}`](value);
+    });
+  }
+
+  publisherReady() {
+    return this._publisher && this._publisherPromise ||
+      this._publishOptions && this.retryPublish() ||
+      Promise.reject();
+  }
+
+  retryPublish() {
+    return this.publish(
+      this._publishOptions.elem, 
+      this._publishOptions.properties,
+      this._publishOptions.handlers
+    );
+  }
+
+  publish(domEl, properties, handlers) {
+    const self = this;
+    this._publishOptions = null;
+    const propCopy = {};
+
+    Object.keys(properties).forEach(key => {
+      propCopy[key] = properties[key];
+    });
+
+    return new Promise((resolve, reject) => {
+      this._publisher = OT.initPublisher(domEl, properties, error => {
+        if (error) {
+          this._processError(
+            domEl,
+            properties,
+            handlers,
+            reject,
+            {
+              name: error.name,
+              message: `Error initializing publisher. ${error.message}`
+            }
+          );
+
+          return;
+        }
+
+        this._session.publish(this._publisher, error => {
+          if (error) {
+            this._processError(domEl, properties, handlers, reject, error);
+
+            Object.keys(handlers).forEach(name => {
+              // ? What the purpose of this?
+              this._publisher.on(name, handlers[name].bind(self));
+            });
+
+            this._solvePublisherPromise(this._publisher);
+
+            resolve(this._publisher);
+          }
+        });
+      });
+    });
+  }
+
+  _processError(elem, properties, handlers, reject, error) {
+    this._publishOptions = { elem, properties, handlers };
+    this._publisher = null;
+
+    reject({ error, publisherPromise: this._publisherPromise });
+  }
 }
 
 export default OTHelper;
-

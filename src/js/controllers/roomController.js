@@ -15,7 +15,7 @@ export function init() {
   // Create OTHelper instance
   room.otHelper = new OTHelper();
   // Get Room Parameters
-  getRoomParams()
+  getRoomParams(room.otHelper)
     .then(info => getRoomInfo(info))
     .then(params => {
       // Load annotations for analytics
@@ -34,7 +34,7 @@ export function init() {
 /**
  * @return {object} Information about the room
  */
-function getRoomParams() {
+function getRoomParams(otHelper) {
   const pathName = getPathName();
   const roomURI = getRoomURI(pathName);
   const roomName = Utils.decodeStr(roomURI);

@@ -100,7 +100,6 @@ let otNetworkTest;
  */
 export function showCallSettingsPrompt(roomName, username, otHelper) {
   const selector = '.user-name-modal'; 
-  const videoPreviewEventHandlers = this.getVideoPreviewEventHandlers(otHelper);
 
   return Modal
     .show(selector, () => void loadModalText(roomName, username, otHelper))

@@ -1,5 +1,6 @@
 import * as Request from '../helpers/request';
 import * as Events from '../state/events';
+import * as Modal from '../components/modal';
 
 const roomViewPreface = 'roomView';
 const roomControllerPreface = 'roomController';
@@ -10,8 +11,13 @@ const eventHandlers = {
     startArchiving: `${roomViewPreface}:startArchiving`,
     stopArchiving: `${roomViewPreface}:stopArchiving`,
     streamVisibilityChange: `${roomViewPreface}:streamVisibilityChange`,
-
-    buttonClick: `${roomViewPreface}:buttonClick`
+    buttonClick: `${roomViewPreface}:buttonClick`,
+    videoSwitch: `${roomViewPreface}:videoSwitch`,
+    muteAllSwitch: `${roomViewPreface}:muteAllSwitch`,
+    dialOut: `${roomViewPreface}:dialOut`,
+    addToCall: `${roomViewPreface}:addToCall`,
+    togglePublisherAudio: `${roomViewPreface}:togglePublisherAudio`,
+    togglePublisherVideo: `${roomViewPreface}:togglePublisherVideo`
   },
   
   roomController: {
@@ -32,7 +38,9 @@ export default class Room {
     this.enableAnnotations = true;
     this.enableArchiveManager = false;
     this.enableSip = false;
+
     this.requireGoogleAuth = false; // For SIP dial-out
+    this.googleAuth = null;
 
     this.userName = null;
     this.roomURI = null;
@@ -60,18 +68,47 @@ export default class Room {
     };
 
     this.dialedNumberTokens = {};
+
+    this._sharedStatus = { roomMuted: false };
+    this._disabledAllVideos = false;
   }
 
   /** */
   addEventHandlers() {
     Events.addEventHandler(eventHandlers.roomView.endCall, this.endCall);
+
     Events.addEventHandler(
       eventHandlers.roomView.startArchiving, this.startArchiving);
+
     Events.addEventHandler(
       eventHandlers.roomView.stopArchiving, this.stopArchiving);
+
     Events.addEventHandler(
       eventHandlers.roomView.streamVisibilityChange, 
       this.streamVisibilityChange
+    );
+
+    Event.addEventHandler(
+      eventHandlers.roomView.buttonClick, this.buttonClick);
+
+    Event.addEventHandler(
+      eventHandlers.roomView.videoSwitch, this.videoSwitch);
+
+    Event.addEventHandler(
+      eventHandlers.roomView.muteAllSwitch, this.muteAllSwitch);
+
+    Event.addEventHandler(eventHandlers.roomView.dialOut, this.dialOut);
+
+    Event.addEventHandler(eventHandlers.roomView.addToCall. this.addToCall);
+
+    Event.addEventHandler(
+      eventHandlers.roomView.togglePublisherAudio, 
+      this.togglePublisherAudio
+    );
+
+    Event.addEventHandler(
+      eventHandlers.roomView.togglePublisherVideo, 
+      this.togglePublisherVideo
     );
   }
 
@@ -213,7 +250,8 @@ export default class Room {
           );
 
           if (isMicrophone) {
-            // TODO
+            this.sendSignalMuteAll(false, true);
+            this._sharedStatus.roomMuted = false;
           }
         }
       }
@@ -275,8 +313,161 @@ export default class Room {
     );
   }
 
+  /**
+   * @param {boolean} status 
+   * @param {boolean} onlyChangeSwitch 
+   */
   sendSignalMuteAll(status, onlyChangeSwitch) {
+    this.otHelper.sendSignal('muteAll', { status, onlyChangeSwitch });
+  }
+
+  /** @param {HTMLEvent} evt */
+  videoSwitch(evt) {
+    this.changeSubscriberStatus('video', evt.detail.status);
+  }
+
+  /**
+   * @param {string} name 
+   * @param {string | boolean} status 
+   */
+  changeSubscriberStatus(name, status) {
+    this._disabledAllVideos = status;
+
+    Object.keys(this.subscriberStreams).forEach(streamId => {
+      if (
+        this.subscriberStreams[streamId] &&
+        this.subscriberStreams[streamId].stream.videoType === 'camera'
+      ) {
+        this.pushSubscriberButton(streamId, name, status);
+      }
+    });
+  }
+
+  /**
+   * @param {string} streamId 
+   * @param {string} name 
+   * @param {string | boolean} status 
+   */
+  pushSubscriberButton(streamId, name, status) {
+    this.buttonClick({ 
+      detail: { 
+        streamId, 
+        name, 
+        disableAll: true, 
+        status 
+      }
+    });
+  }
+
+  /** @param {HTMLEvent} evt */
+  muteAllSwitch(evt) {
+    const roomMuted = evt.detail.status;
+    this._sharedStatus.roomMuted = roomMuted;
+    this.setAudioStatus(roomMuted);
+    this.sendSignalMuteAll(roomMuted, false);
+  }
+
+  /** @param {string | boolean} switchStatus */
+  setAudioStatus(switchStatus) {
+    if (this.otHelper.isPublisherReady) {
+      this.buttonClick({
+        detail: {
+          streamId: 'publisher',
+          name: 'audio',
+          disableAll: true,
+          status: switchStatus
+        }
+      });
+    }
+  }
+
+  /** @param {HTMLEvent} evt */
+  dialOut(evt) {
+    if (evt.detail) {
+      const phoneNumber = evt.detail.replace(/\D/g, '');
+
+      if (
+        this.requireGoogleAuth && 
+        (this.googleAuth.isSignedIn.get() !== true)
+      ) {
+        this.googleAuth.signIn().then(() => {
+          document.body.data('google-signed-in', 'true');
+          this._dialOut(phoneNumber);
+        });
+      } else {
+        this._dialOut(phoneNumber);
+      }
+    }
+  }
+
+  /** @param {string} phoneNumber */
+  _dialOut(phoneNumber) {
+    const alreadyInCall = Object.keys(this.subscriberStreams)
+      .some(streamId => {
+        if (this.subscriberStreams[streamId]) {
+          const stream = this.subscriberStreams[streamId].stream;
+          return stream.isSip && stream.name === phoneNumber;
+        }
+        return false;
+      });
+
+    if (alreadyInCall) {
+      console.log(`The number is already in this call: ${phoneNumber}`); // eslint-disable-line no-console
+    } else {
+      let googleIdToken;
+
+      if (this.requireGoogleAuth) {
+        const user = this.googleAuth.currentUser().get();
+        googleIdToken = user.getAuthResponse().id_token;
+      } else {
+        googleIdToken = '';
+      }
+
+      const data = { phoneNumber, googleIdToken };
+      Request.dialOut(this.roomURI, data);
+      this.dialedNumberTokens[phoneNumber] = googleIdToken;
+    }
+  }
+
+  /** */
+  addToCall() {
+    this.showAddToCallModal();
+  }
+
+  /** @return {Promise<HTMLElement>} */
+  showAddToCallModal() {
+    const selector = '.add-to-call-modal';
+
+    return Modal.show(selector).then(() => {
+      return new Promise(resolve => {
+        const enterButton = document.querySelector(`${selector} button`);
+
+        if (enterButton) {
+          enterButton.addEventListener('click', function onClicked(evt) {
+            evt.preventDefault();
+            enterButton.removeEventListener('click', onClicked);
+
+            return Modal.hide(selector).then(() => {
+              resolve(document.querySelector(`${selector} input`).value.trim());
+            });
+          });
+        }
+      });
+    });
+  }
+
+  togglePublisherAudio(evt) {
+    const newStatus = evt.detail.hasAudio;
+
+    if (
+      !this.otHelper.isPublisherReady || 
+      this.otHelper.publisherHas('audio') !== newStatus
+    ) {
+      this.otHelper.togglePublisherAudio(newStatus);
+    }
+  }
+
+  togglePublisherVideo() {
     // TODO
-    // this.otHelper.sendSignal()
   }
 }

@@ -90,17 +90,16 @@ export function precallTemplateView() {
                   </div>
                 </div>
               </div>
+
+              <div id="audio-switch" class="sourcePick switch-button">
+                <a id="prePickMic">Switch</a>
+              </div>
+
+              <a id="initialAudioSwitch" class="activated">
+                <label>On</label>
+                <i data-icon="audioSwitch"></i>
+              </a>
             </div>
-
-            <div id="audio-switch" class="sourcePick switch-button">
-              <a id="prePickMic">Switch</a>
-            </div>
-
-            <a id="initialAudioSwitch" class="activated">
-              <label>On</label>
-              <i data-icon="audioSwitch"></i>
-            </a>
-
             <br />
           </div>
 

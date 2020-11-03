@@ -49,3 +49,11 @@ export function hangUp(phoneNumber, token) {
   return axios.post(`${server}/hang-up/`, { 
     phoneNumber, googleIdToken: token });
 }
+
+/**
+ * @param {string} roomURI 
+ * @param {object} data 
+ */
+export function dialOut(roomURI, data) {
+  return axios.post(`${server}/room/${roomURI}/dial`, { data });
+}

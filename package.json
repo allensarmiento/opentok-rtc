@@ -4,6 +4,7 @@
   "description": "OpenTokRTC sample application to show off the OpenTok API and platform capabilities ",
   "main": "server.js",
   "engines": {},
+  "proxy": "http://localhost:5000",
   "scripts": {
     "start": "node server.js",
     "build": "webpack --config webpack.prod.config.js",
