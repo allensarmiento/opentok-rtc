@@ -1,3 +1,5 @@
+import * as BrowserUtils from '../utils/browserUtils';
+
 /**
  * @param {HTMLElement} elem 
  * @param {string} text
@@ -43,4 +45,26 @@ export function getAncestorByTagName(el, tagName) {
   }
 
   return null;
+}
+
+/** */
+export function flush() {
+  if (BrowserUtils.isIE()) {
+    // While many attributes, when changed, cause a reflow this doesn't appear
+    // to be the case with data-* attributes in Internet Explorer. Changing
+    // these will not immediately result in the element being redrawn - we
+    // have to trigger out reflow manually.
+    return elements => {
+      elements = Array.isArray(elements) ? elements : [elements];
+      elements.forEach(element => {
+        element = typeof element === 'string' 
+          ? document.querySelector(element) : element;
+        if (element) {
+          element.classList.toggle('flush-this-element-please');
+        }
+      });
+    };
+  }
+
+  return () => {};
 }

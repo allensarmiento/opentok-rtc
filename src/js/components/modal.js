@@ -31,6 +31,10 @@ export function show(selector, preShowCb, allowMultiple) {
     return new Promise(function(resolve) {
       modalShown = true;
 
+      if (preShowCb) {
+        preShowCb();
+      }
+
       const modal = document.querySelector(selector);
       modal.addEventListener(transEndEventName, function onTransitionend() {
         modal.removeEventListener(transEndEventName, onTransitionend);
@@ -106,3 +110,41 @@ function removeCloseHandler(selector) {
   document.body.removeEventListener('keyup', keyPressHandler);
 }
 
+/**
+ * @param {string} txt 
+ * @param {string | boolean} allowMultiple 
+ */
+export function showConfirm(txt, allowMultiple) {
+  const selector = '.switch-alert-modal';
+  const ui = document.querySelector(selector);
+
+  return show(selector, () => { loadModalText(ui, txt) }, allowMultiple)
+    .then(() => {
+      return new Promise(resolve => {
+        ui.addEventListener('click', function onClicked(evt) {
+          const classList = evt.target.classList;
+          const hasAccepted = classList.contains('accept');
+
+          if (
+            evt.target.id !== 'switchAlerts' &&
+            !hasAccepted &&
+            !classList.contains('close')
+          ) {
+            return;
+          }
+
+          evt.stopImmediatePropagation();
+          evt.preventDefault();
+
+          ui.removeEventListener('click', onClicked);
+          hide(selector).then(() => { resolve(hasAccepted) });
+        });
+      });
+    });
+}
+
+function loadModalText(ui, txt) {
+  ui.querySelector(' header .msg').textContent = txt.head;
+  ui.querySelector(' p.detail').innerHTML = txt.detail;
+  ui.querySelector(' footer button.accept').textContent = txt.button;
+}
