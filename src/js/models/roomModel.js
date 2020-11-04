@@ -1,9 +1,11 @@
 import * as Request from '../helpers/request';
 import * as Events from '../state/events';
 import * as Modal from '../components/modal';
+import * as RoomStatus from './roomStatus';
 
 const roomViewPreface = 'roomView';
 const roomControllerPreface = 'roomController';
+const roomStatusPreface = 'roomStatus';
 
 const eventHandlers = {
   roomView: {
@@ -22,7 +24,12 @@ const eventHandlers = {
   
   roomController: {
     control: (control) => `${roomControllerPreface}:${control}`,
-    userChangeStatus: `${roomControllerPreface}:userChangeStatus`
+    userChangeStatus: `${roomControllerPreface}:userChangeStatus`,
+    roomMuted: `${roomControllerPreface}:roomMuted`
+  },
+
+  roomStatus: {
+    updatedRemotely: `${roomStatusPreface}:updatedRemotely`
   }
 };
 
@@ -47,13 +54,15 @@ export default class Room {
 
     this.subscriberStreams = {};
 
+    ////////////////////
+    // View Event Handlers
+
     // Fires events for toggling video and audio.
     this.publisherButtons = {
       video: {
         eventFiredName: eventHandlers.roomView.buttonClick,
         dataIcon: 'video',
         eventName: 'click',
-        context: 'otHelper', // ! Not needed
         action: 'togglePublisherVideo',
         enabled: true
       },
@@ -61,7 +70,6 @@ export default class Room {
         eventFiredName: eventHandlers.roomView.buttonClick,
         dataIcon: 'mic',
         eventName: 'click',
-        context: 'otHelper', // ! Not needed
         action: 'togglePublisherAudio',
         enabled: true
       }
@@ -71,10 +79,21 @@ export default class Room {
 
     this._sharedStatus = { roomMuted: false };
     this._disabledAllVideos = false;
+
+    ////////////////////
+    // Room Status Event Handlers
+    this.setPublisherReady = null;
+    this.publisherReady = new Promise(resolve => {
+      this.setPublisherReady = resolve;
+    });
+
+    this.STATUS_KEY = 'room';
   }
 
+  ////////////////////
+  // View Event Handlers
   /** */
-  addEventHandlers() {
+  addViewEventHandlers() {
     Events.addEventHandler(eventHandlers.roomView.endCall, this.endCall);
 
     Events.addEventHandler(
@@ -456,18 +475,49 @@ export default class Room {
     });
   }
 
+  /** @param {HTMLEvent} evt */
   togglePublisherAudio(evt) {
     const newStatus = evt.detail.hasAudio;
 
     if (
-      !this.otHelper.isPublisherReady || 
+      !this.otHelper.isPublisherReady() || 
       this.otHelper.publisherHas('audio') !== newStatus
     ) {
       this.otHelper.togglePublisherAudio(newStatus);
     }
   }
 
-  togglePublisherVideo() {
-    // TODO
+  togglePublisherVideo(evt) {
+    const newStatus = evt.detail.hasAudio;
+
+    if (
+      !this.otHelper.isPublisherReady() || 
+      this.otHelper.publisherHas('video') !== newStatus
+    ) {
+      this.otHelper.togglePublisherVideo(newStatus);
+    }
+  }
+
+  ////////////////////
+  // Room Status Event Handlers
+  /** */
+  addRoomStatusEventHandlers() {
+    Events.addEventHandler(
+      eventHandlers.roomStatus.updatedRemotely, this.updatedRemotely);
+  }
+
+  /** */
+  updatedRemotely() {
+    this.publisherReady.then(() => {
+      this._sharedStatus = RoomStatus.get(this.STATUS_KEY);
+      const roomMuted = this._sharedStatus.roomMuted
+      this.setAudioStatus(roomMuted);
+
+      if (roomMuted) {
+        Events.sendEvent(eventHandlers.roomController.roomMuted, {
+          isJoining: true
+        });
+      }
+    });
   }
 }

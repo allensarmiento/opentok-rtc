@@ -23,3 +23,24 @@ function addLine(elem, line) {
   }
 }
 
+/**
+ * @param {HTMLElement} el
+ * @param {string} tagName 
+ * @return {HTMLElement | null} Element with specified tag name or null
+ */
+export function getAncestorByTagName(el, tagName) {
+  tagName = tagName.toUpperCase();
+
+  if (el.tagName === tagName) {
+    return el;
+  }
+
+  while (el.parentNode) {
+    el = el.parentNode;
+    if (el.tagName === tagName) {
+      return el;
+    }
+  }
+
+  return null;
+}

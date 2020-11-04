@@ -20,6 +20,7 @@ const DOM = {
   topBannerElem: document.getElementById('top-banner'),
   screenElem: document.getElementById('screen'),
 };
+DOM.handler = DOM.dock;
 
 let overCallControls = false;
 let hideCallControlsTimer;
@@ -31,6 +32,8 @@ let hideFeedbackButtonTimer;
 let roomName = '';
 let roomURI = '';
 
+////////////////////
+// View
 /** */
 export function showRoom() {
   DOM.topBannerElem.style.visibility = 'visible';  
@@ -114,3 +117,32 @@ export function setRoomURI(uri) {
   roomURI = uri;
 }
 
+////////////////////
+// Initialization
+let enableArchiveManager;
+let enableSip;
+
+export function init(hangoutScroll, archiveManager, sip) {
+  enableArchiveManager = archiveManager;
+  DOM.dock.style.visibility = 'visible';
+  enableSip = sip;
+  // TODO
+}
+
+function addHandlers() {
+  DOM.handler.addEventListener('click', handlerClicked);
+
+  DOM.callControlsElem.addEventListener('click', callControlsClicked);
+  // TODO
+}
+
+function handlerClicked() {
+  DOM.dock.classList.toggle('collapsed');
+  DOM.dock.data('previouslyCollapsed', null);
+}
+
+function callControlsClicked(evt) {
+  let elem = evt.target;
+  elem = HtmlElems.getAncestorByTagName(elem, 'button');
+  // TODO
+}

@@ -22,10 +22,8 @@ export function init() {
       return params;
     })
     .then(params => {
-      room.addEventHandlers();
-      Events.addEventHandler('roomView:buttonClick', evt => {
-       
-      });
+      room.addViewEventHandlers();
+      room.addRoomStatusEventHandlers();
       // TODO
     });
   // ...

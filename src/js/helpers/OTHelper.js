@@ -107,6 +107,8 @@ class OTHelper {
       `has${type.toLowerCase() === 'audio' && 'Audio' || 'Video'}`];
   }
 
+  ////////////////////
+  // Message chat 
   sendSignal(type, msgData, to) {
     let messageOrder = 0;
 
@@ -163,8 +165,14 @@ class OTHelper {
     return obj;
   }
 
+  ////////////////////
+  // Toggle Publisher Options
   togglePublisherAudio(value) {
     return this._togglePublisherProperty('Audio', value);
+  }
+
+  togglePublisherVideo(value) {
+    return this._togglePublisherProperty('Video', value);
   }
 
   _togglePublisherProperty(property, value) {
@@ -216,14 +224,18 @@ class OTHelper {
         this._session.publish(this._publisher, error => {
           if (error) {
             this._processError(domEl, properties, handlers, reject, error);
+          } else {
+            this._publisherInitialized = true;
 
             Object.keys(handlers).forEach(name => {
               // ? What the purpose of this?
+              // ? Probably when the publisher.on event is triggered,
+              // ? the handlers[name] function gets called and we want
+              // ? to call it using OTHelper
               this._publisher.on(name, handlers[name].bind(self));
             });
 
             this._solvePublisherPromise(this._publisher);
-
             resolve(this._publisher);
           }
         });
