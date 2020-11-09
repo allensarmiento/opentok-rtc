@@ -68,3 +68,17 @@ export function flush() {
 
   return () => {};
 }
+
+/**
+ * @param {HTMLElement} elem 
+ * @param {string} text 
+ */
+export function replaceText(elem, text) {
+  const newChild = document.createTextNode(text);
+  
+  if (elem.hasChildNodes()) {
+    elem.replaceChild(newChild, elem.firstChild);
+  } else {
+    elem.appendChild(newChild);
+  }
+}
