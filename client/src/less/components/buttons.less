@@ -1,0 +1,106 @@
+// TODO: This is a mixin
+.btn-mixin() {
+  font-size: 16px;
+  font-family: @muliRegularFont, arial;
+  font-stretch: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  text-align: center;
+  line-height: 50px;
+  display: inline-block;
+  height: 50px;
+  border: 0;
+  border-radius: 0px;
+  transition: all 0.5s ease-out;
+
+  &:hover {
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+
+.btn {
+  .btn-mixin();
+}
+
+.btn-no-underline, .btn-padding {
+  .btn-mixin();
+  padding: 0 30px;
+}
+
+.btn-padding {
+  &-large {
+    padding: 0 50px;
+  }
+
+  &-small {
+    padding: 0 20px;
+  }
+}
+
+.btn-blue {
+  border-radius: 4px;
+  background-color: #10a9dc;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
+  color: #fff;
+
+  &:hover {
+    color: #fff;
+    background-color: #007ba3;
+    box-shadow: 0 0 0 2px #0099cb;
+  }
+}
+
+.btn-white {
+  background-color: #fff;
+  box-shadow: 0 0 0 1px #0099cb;
+  color: #0099cb;
+
+  &:hover {
+    color: #0099cb;
+    background-color: #fff;
+    box-shadow: 0 0 0 2px #0099cb;
+  }
+}
+
+// TODO: This is a mixin
+.ctarrow-mixin() {
+  &::after {
+    content: "";
+    display: inline-block;
+    background-size: 9px 16px;
+    width: 9px;
+    height: 16px;
+    vertical-align: middle;
+    margin-left: 15px;
+    transition: all 0.5s ease-out;
+  }
+
+  &:hover::after {
+    background-size: 9px 16px;
+    transform: translate(3px 0px);
+  }
+}
+
+.ctarrow-white {
+  .ctarrow-mixin();
+
+  &::after {
+    background-image: url("../../assets/images/icons/ctaarrow_white@2x.png");
+  }
+
+  &-small {
+    &::after {
+      margin-left: 10px;
+    }
+  }
+}
+
+.ctarrow-blue {
+  .ctarrow-mixin();
+
+  &::after {
+    background-image: url("../../assets/images/icons/ctaarrow-blue@2x.png");
+  }
+}
