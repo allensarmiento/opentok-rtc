@@ -4,9 +4,18 @@
       <router-link to="/"></router-link> |
       <router-link to="/about">About</router-link>
     </div> -->
-    <router-view/>
+    <room />
   </div>
 </template>
+
+<script>
+import Room from './views/Room.vue';
+
+export default {
+  name: 'App',
+  components: { Room },
+};
+</script>
 
 <style lang="less">
 @import "./less/main.less";

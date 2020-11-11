@@ -21,7 +21,7 @@
             </header>
 
             <!-- Form -->
-            <form>
+            <form ref="form">
               <div>
                 <input
                   ref="roomInput"
@@ -29,11 +29,17 @@
                   id="room"
                   class="text-input required"
                   data-wd="roomname"
+                  @keyup="onKeyup('room')"
+                  @focus="onFocus('room')"
                 />
-                <label id="room-label" :class="visitedClass('room')">
+                <label
+                  id="room-label"
+                  :class="visitedClass('room')"
+                  :style="opacityStyle('room')"
+                >
                   Meeting name
                 </label>
-                <p class="error-room error-text">
+                <p v-if="displayError" class="error-room error-text">
                   <i data-icon="warning"></i>
                   Please enter a meeting name.
                 </p>
@@ -46,13 +52,19 @@
                   id="user"
                   class="text-input"
                   data-wd="username"
+                  @keyup="onKeyup('user')"
+                  @focus="onFocus('user')"
                 />
                 <label id="user-label" :class="visitedClass('user')">
                   Your name
                 </label>
               </div>
 
-              <button id="enter" data-wd="enterroom"></button>
+              <button
+                id="enter"
+                data-wd="enterroom"
+                @click.stop.prevent="onEnterClicked"
+              ></button>
             </form>
 
             <!-- More info -->
@@ -99,6 +111,11 @@
 </template>
 
 <script>
+/* Notes
+ * TODO: Implement showContract
+ * TODO: Fix UI (Focusing doesn't work well)
+ */
+
 export default {
   name: 'Landing',
   mounted() {
@@ -112,6 +129,11 @@ export default {
       },
 
       displayHeader: false,
+      displayError: false,
+
+      variables: {
+        showTos: false,
+      },
 
       // Project Settings
       isWebRTCVersion: false,
@@ -122,6 +144,7 @@ export default {
         room: {
           value: '',
           visited: false,
+          opacity: 1,
         },
         user: {
           value: '',
@@ -160,6 +183,7 @@ export default {
       this.displayHeader = true;
 
       this.resetForm();
+      this.setUsernameFromLocalStorage();
     },
     /** Resets all form fields and add event listeners. */
     resetForm() {
@@ -172,12 +196,77 @@ export default {
       this.$refs.roomInput.focus();
     },
     /** */
+    setUsernameFromLocalStorage() {
+      const storedUsername = window.localStorage.getItem('username');
+
+      if (storedUsername) {
+        this.roomForm.user.value = storedUsername;
+        this.roomForm.user.visited = true;
+      }
+    },
+    /** */
+    addHandlers() {},
+    /** */
     visitedClass(inputType) {
       return this.roomForm[inputType].visited ? 'visited' : '';
     },
     /** */
+    opacityStyle(inputType) {
+      return this.roomForm[inputType].opacity ? 'opacity: 1;' : '';
+    },
+    /** */
     onKeyup(inputTarget) {
       this.roomForm[inputTarget].visited = true;
+    },
+    /** */
+    onFocus(inputTarget) {
+      if (inputTarget === 'room') {
+        this.displayError = false;
+        this.roomForm.room.opacity = 1;
+
+        if (this.roomForm.room.value.trim().length) {
+          this.roomForm.room.visited = true;
+        } else {
+          this.roomForm.visited = false;
+        }
+      } else if (inputTarget === 'user') {
+        if (this.roomForm.user.value.trim().length) {
+          this.roomForm.user.visited = true;
+        } else {
+          this.roomForm.user.visited = false;
+        }
+      }
+    },
+    /** */
+    onEnterClicked() {
+      if (!this.isValid()) {
+        this.$refs.form.classList.add('error');
+        this.$refs.roomInput.blur();
+        this.roomForm.room.opacity = 0;
+      } else {
+        this.$refs.form.classList.remove('error');
+
+        if (this.variables.showTos) {
+          // TODO
+          console.log('Show Contract');
+        } else {
+          console.log('Navigate to room');
+        }
+      }
+    },
+    /** */
+    isValid() {
+      const valid = this.$refs.roomInput.type === 'checkbox'
+        ? this.$refs.roomInput.checked
+        : this.roomForm.room.value;
+
+      if (valid) {
+        this.roomForm.room.visited = false;
+      } else {
+        this.roomForm.room.visited = true;
+      }
+
+      return valid;
     },
   },
 };
