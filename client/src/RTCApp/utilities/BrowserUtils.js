@@ -46,3 +46,57 @@ export function getRoomURI(pathNameArr) {
 export function decodeStr(str) {
   return str ? window.decodeURIComponent(str) : str;
 }
+
+/**
+ * @param {undefined | Array} curValue
+ * @param {string} newValue
+ */
+const addValue = (curValue, newValue) => {
+  let valueToAdd = [];
+
+  if (curValue === undefined) return newValue;
+  if (!Array.isArray(curValue)) valueToAdd = [curValue];
+
+  valueToAdd.push(newValue);
+  return valueToAdd;
+};
+
+/**
+ * @param {string} searchStr
+ * @return {object} Decoded string parameters
+ */
+export function parseSearch(searchStr) {
+  const decodedStr = decodeStr(searchStr);
+  const initialParams = { params: {} };
+
+  if (typeof searchStr !== 'string') return initialParams;
+
+  return decodedStr
+    .slice(1)
+    .split('&')
+    .map((param) => param.split(/=(.+)?/))
+    .reduce((object, currentValue) => {
+      const newObject = { ...object };
+      const parName = currentValue[0];
+
+      newObject.params[parName] = addValue(
+        newObject.params[parName],
+        currentValue[1] || null,
+      );
+      return newObject;
+    }, initialParams);
+}
+
+/**
+ * Retrieves the array item from object or value.
+ * @param {object} object Object to search.
+ * @param {string} key Key to obtain the value from object.
+ * @return {string | number | object}
+ */
+export function getFirstValFromObjKey(object, key) {
+  if (!(key in object)) return '';
+
+  return Array.isArray(object[key])
+    ? object[key][0]
+    : object[key];
+}

@@ -62,3 +62,33 @@ describe('decodeStr', () => {
     expect(BrowserUtils.decodeStr('%3Fx%3Dtest')).toEqual('?x=test');
   });
 });
+
+describe('parseSearch', () => {
+  it('returns empty object on empty', () => {
+    expect(BrowserUtils.parseSearch()).toMatchObject({ params: {} });
+    expect(BrowserUtils.parseSearch('')).toMatchObject({ params: {} });
+  });
+
+  it('returns object parameters', () => {
+    expect(BrowserUtils.parseSearch('?test1=1&test2=2'))
+      .toMatchObject({ params: { test1: '1', test2: '2' }});
+  });
+});
+
+describe('getFirstValueFromObjectKey', () => {
+  it('returns empty string on empty object', () => {
+    expect(BrowserUtils.getFirstValFromObjKey({}, 'test')).toEqual('');
+  });
+
+  it('returns first element of array if key exists', () => {
+    expect(BrowserUtils.getFirstValFromObjKey({
+      test: [0, 1, 2, 3, 4, 5]
+    }, 'test')).toEqual(0);
+  });
+
+  it('returns value if key exists', () => {
+    expect(BrowserUtils.getFirstValFromObjKey({ 
+      test: 'testing'
+    }, 'test')).toEqual('testing');
+  });
+});

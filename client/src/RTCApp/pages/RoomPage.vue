@@ -10,6 +10,8 @@
     <DeleteArchiveModal />
     <AddToCallModal />
     <SwitchAlertModal />
+
+    <Precall v-if="showPrecall" />
   </div>
 </template>
 
@@ -23,6 +25,7 @@ import FeedbackReport from '../components/Room/FeedbackReport.vue';
 import DeleteArchiveModal from '../components/Room/DeleteArchiveModal.vue';
 import AddToCallModal from '../components/Room/AddToCallModal.vue';
 import SwitchAlertModal from '../components/Room/SwitchAlertModal.vue';
+import Precall from '../components/Precall/Precall.vue';
 
 import OTHelper from '../helpers/OTHelper';
 import * as BrowserUtils from '../utilities/BrowserUtils';
@@ -39,26 +42,53 @@ export default {
     DeleteArchiveModal,
     AddToCallModal,
     SwitchAlertModal,
+    Precall,
   },
   data() {
     return {
       otHelper: null,
+      resolutionAlgorithm: null,
+      debugPreferredResolution: null,
+      enableHangoutScroll: false,
+
+      // !
+      showPrecall: false,
     };
   },
   mounted() {
+    this.initializePrecall();
     this.initializeOTHelper();
     this.getRoomParams();
   },
   methods: {
+    initializePrecall() {
+      this.showPrecall = true;
+    },
     initializeOTHelper() {
       this.otHelper = new OTHelper();
     },
     getRoomParams() {
+      // Room URL.
       const pathNameArr = BrowserUtils
         .splitPathName(document.location.pathname);
       const roomURI = BrowserUtils.getRoomURI(pathNameArr);
       const roomName = BrowserUtils.decodeStr(roomURI);
-      console.log(`${roomName}`);
+
+      // Recover user identifier.
+      const params = BrowserUtils.parseSearch(document.location.search);
+      const userId = BrowserUtils
+        .getFirstValFromObjKey(params, 'userName');
+
+      // Room variables.
+      this.resolutionAlgorithm = BrowserUtils
+        .getFirstValFromObjKey(params, 'userName');
+      this.debugPreferredResolution = BrowserUtils
+        .getFirstValFromObjKey(params, 'debugPreferredResolution');
+      this.enableHangoutScroll = BrowserUtils
+        .getFirstValFromObjKey(params, 'enableHangoutScroll') !== undefined;
+
+      // Startup precall.
+      console.log(`${roomName}: ${params}: ${userId}`);
     },
   },
 };
