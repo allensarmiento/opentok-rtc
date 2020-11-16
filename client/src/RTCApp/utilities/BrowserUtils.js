@@ -100,3 +100,19 @@ export function getFirstValFromObjKey(object, key) {
     ? object[key][0]
     : object[key];
 }
+
+/** */
+export function isIE() {
+  const userAgent = 'userAgent' in navigator
+    && (navigator.userAgent.toLowerCase() || '');
+
+  return /msie/.test(userAgent)
+    || userAgent.indexOf('trident/') !== -1;
+}
+
+/** */
+export function isSafariIOS() {
+  const { userAgent } = window.navigator;
+
+  return userAgent.match(/iPad/i) || userAgent.match(/iPhone/i);
+}

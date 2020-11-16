@@ -53,6 +53,9 @@ export default {
 
       // !
       showPrecall: false,
+
+      roomName: '',
+      username: '',
     };
   },
   mounted() {
@@ -72,7 +75,7 @@ export default {
       const pathNameArr = BrowserUtils
         .splitPathName(document.location.pathname);
       const roomURI = BrowserUtils.getRoomURI(pathNameArr);
-      const roomName = BrowserUtils.decodeStr(roomURI);
+      this.roomName = BrowserUtils.decodeStr(roomURI);
 
       // Recover user identifier.
       const params = BrowserUtils.parseSearch(document.location.search);
@@ -88,7 +91,7 @@ export default {
         .getFirstValFromObjKey(params, 'enableHangoutScroll') !== undefined;
 
       // Startup precall.
-      console.log(`${roomName}: ${params}: ${userId}`);
+      console.log(`${params}: ${userId}`);
     },
   },
 };

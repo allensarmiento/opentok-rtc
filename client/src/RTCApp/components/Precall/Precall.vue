@@ -1,12 +1,16 @@
 <template>
-  <section class="tc-modal user-name-modal">
+  <Modal
+    :show="showModal"
+    class="tc-modal user-name-modal"
+    @keyup.enter.prevent.native="submitForm"
+  >
     <img
       id="logo"
       src="../../assets/images/new-vonage-logo.png"
       alt="Vonage logo"
     />
 
-    <p id="name-heading" class="room-name"></p>
+    <p id="name-heading" class="room-name">Join {{ roomName }}</p>
 
     <div class="precall-right">
       <form class="tc-dialog">
@@ -17,6 +21,7 @@
         <div id="enter-name-prompt">
           <div>
             <input
+              ref="userNameInput"
               id="user-name-input"
               class="block username"
               autocomplete="off"
@@ -27,30 +32,17 @@
         </div>
 
         <PublishSettings />
+        <PrecallTest v-if="showConnectivityTest" />
+        <PrecallTestMeter v-if="showConnectivityTest" />
 
-        <div id="pre-call-test">
-          <div id="precall-test-labels">
-            <img src="../../assets/images/icons/connectivity-icon.svg" />
-            <span>Connectivity Test</span>
-            <span id="test-status">
-              <label></label>
-              <button id="connectivity-cancel">
-                <i data-icon="connectivity-cancel"></i>
-              </button>
-            </span>
-          </div>
-        </div>
-
-        <div id="precall-test-meter">
-          <div id="precall-test-meter-level"></div>
-        </div>
-
-        <button id="enter"
+        <button
+          ref="enterButton"
+          id="enter"
           class="btn btn-blue btn-padding"
           type="submit"
-          disabled
+          :disabled="roomName ? true : false"
         >
-          <span class="room-name"></span>
+          <span class="room-name">{{ roomName }}</span>
         </button>
       </form>
     </div>
@@ -70,7 +62,7 @@
         Re-test
       </div>
     </div>
-  </section>
+  </Modal>
 </template>
 
 <script>
@@ -82,14 +74,52 @@
  * elements and when a transition event is called, the modal will
  * close. The user-name-modal can probably be within a modal component.
  */
+import Modal from '../Modal.vue';
 import PublishSettings from './PublishSettings.vue';
+import PrecallTest from './Test.vue';
+import PrecallTestMeter from './TestMeter.vue';
 import Results from './Results.vue';
+
+import OTHelper from '../../helpers/OTHelper';
+import * as BrowserUtils from '../../utilities/BrowserUtils';
 
 export default {
   name: 'Precall',
   components: {
+    Modal,
     PublishSettings,
+    PrecallTest,
+    PrecallTestMeter,
     Results,
+  },
+  props: {
+    otHelper: { type: [OTHelper, null] },
+    roomName: { type: String, default: '' },
+    username: { type: String, default: '' },
+  },
+  data() {
+    return {
+      showModal: false,
+      showConnectivityTest: true,
+    };
+  },
+  methods: {
+    showCallSettingsPrompt() {
+      this.showModal = true;
+    },
+    loadModalText() {
+      if (this.username) this.$refs.enterButton.focus();
+      else this.$refs.userNameInput.focus();
+
+      if (BrowserUtils.isIE() || BrowserUtils.isSafariIOS()) {
+        this.hideConnectivityTest();
+      }
+    },
+    hideConnectivityTest() {
+      this.showConnectivityTest = false;
+    },
+    submitForm() {},
+    hidePrecall() {},
   },
 };
 </script>
