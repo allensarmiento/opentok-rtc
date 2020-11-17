@@ -1,12 +1,17 @@
 <template>
-  <section id="screen">
+  <section id="screen" :style="screenVisible" @mousemove="showControls">
     <div class="streams">
       <div class="tc-list">
         <ul></ul>
       </div>
     </div>
 
-    <div class="call-controls" id="call-controls">
+    <div
+      id="call-controls"
+      :class="['call-controls', callControls.visible]"
+      @mouseover="mouseoverCallControls"
+      @mouseout="mouseoutCallControls"
+    >
       <div>
         <button id="endCall" disabled>
           <i data-icon="end_call"></i>
@@ -59,5 +64,56 @@
 <script>
 export default {
   name: 'Screen',
+  props: {
+    visible: { type: String, default: '' },
+  },
+  data() {
+    return {
+      overCallControls: false,
+      hideCallControlsTimer: null,
+      overFeedbackButton: false,
+      hideFeedbackButtonTimer: null,
+
+      callControls: {
+        visible: '',
+      },
+    };
+  },
+  computed: {
+    screenVisible() {
+      return this.visible === 'visible'
+        ? 'visibility: visible;'
+        : '';
+    },
+  },
+  methods: {
+    showControls() {
+      this.showCallControls();
+    },
+    showCallControls() {
+      this.callControls.visible = 'visible';
+
+      if (!this.overCallControls && !this.hideCallControlsTimer) {
+        this.hideCallControlsTimer = setTimeout(this.hideCallControls, 3000);
+      }
+    },
+    hideCallControls() {
+      this.hideCallControlsTimer = null;
+      this.callControls.visible = '';
+    },
+    mouseoverCallControls() {
+      clearTimeout(this.hideCallControlsTimer);
+      this.overCallControls = true;
+    },
+    mouseoutCallControls() {
+      this.overCallControls = false;
+      this.hideCallControls();
+    },
+
+    showFeedbackButton() {},
+    hideFeedbackButton() {},
+    mouseoverFeedbackButton() {},
+    mouseoutFeedbackButton() {},
+  },
 };
 </script>

@@ -1,12 +1,12 @@
 <template>
-  <section id="top-banner">
+  <section id="top-banner" :style="topBannerStyle">
     <div class="icon-container">
       <i data-icon="tokbox-logo"></i>
     </div>
 
     <div class="center-container">
       <div class="room-info">
-        <p class="room-name"></p>
+        <p class="room-name">{{ roomName }}</p>
         <i data-icon="participants"></i>
         <span id="participantsStr"></span>
       </div>
@@ -60,5 +60,17 @@
 <script>
 export default {
   name: 'TopBanner',
+  props: {
+    visible: { type: String, default: '' },
+    roomName: { type: String, default: '' },
+    roomURI: { type: String, default: '' },
+  },
+  computed: {
+    topBannerStyle() {
+      return this.visible === 'visible'
+        ? 'visibility: visible'
+        : '';
+    },
+  },
 };
 </script>
