@@ -17,7 +17,7 @@ export function getRoomInfo(roomParams) {
     `${SERVER}/room/${roomParams.roomURI}/info${userName}`,
     roomParams,
   )
-    .then((data) => data.roomInfo)
+    .then((data) => data.data.answer)
     .then((roomInfo) => {
       if (!(roomInfo && roomInfo.sessionId)) {
         throw new Error('Room\'s data could not be recovered.');

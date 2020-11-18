@@ -84,6 +84,8 @@ app.post('/room/:roomName/info', function(req, res) {
       };
 
       answer[sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
+      if ('sessionIdField' in answer) console.log('sessionIdField here');
+      else console.log('sessionId here');
       res.json({ answer });
     });
 });

@@ -6,7 +6,7 @@
       :roomName="roomName"
       :roomURI="roomURI"
     />
-    <Screen :visible="roomVisibility.screen" />
+    <Screen :visible="roomVisibility.screen" :otHelper="otHelper" />
     <!-- feedbackUrl -->
     <Chat />
     <ScreenShareErrors />
@@ -71,7 +71,7 @@ export default {
       },
     };
   },
-  mounted() {
+  async mounted() {
     this.initializePrecall();
     this.initializeOTHelper();
     this.getRoomParams();
@@ -79,8 +79,10 @@ export default {
     // ! Receive room info: Below is a placeholder.
     const info = this.getInfo();
 
-    const params = this.getRoomInfo(info);
+    const params = await this.getRoomInfo(info);
     console.log(params);
+
+    this.showRoom();
   },
   methods: {
     initializePrecall() {
@@ -97,13 +99,13 @@ export default {
       this.roomName = BrowserUtils.decodeStr(this.roomURI);
 
       // Recover user identifier.
-      const params = BrowserUtils.parseSearch(document.location.search);
-      const userId = BrowserUtils
+      const { params } = BrowserUtils.parseSearch(document.location.search);
+      this.username = BrowserUtils
         .getFirstValFromObjKey(params, 'userName');
 
       // Room variables.
       this.resolutionAlgorithm = BrowserUtils
-        .getFirstValFromObjKey(params, 'userName');
+        .getFirstValFromObjKey(params, 'resolutionAlgorithm');
       this.debugPreferredResolution = BrowserUtils
         .getFirstValFromObjKey(params, 'debugPreferredResolution');
       this.enableHangoutScroll = BrowserUtils
@@ -111,10 +113,9 @@ export default {
 
       // Precall show call settings prompt.
       // ! Will do this later on.
-      console.log(`${params}: ${userId}`);
+      console.log(`${params}`);
 
       // After precall show call settings prompt.
-      this.showRoom();
     },
     showRoom() {
       this.roomVisibility.topBanner = 'visible';
@@ -169,13 +170,34 @@ export default {
         tbConfig: {
           apiKey: process.env.VUE_APP_TB_API_KEY,
           apiSecret: process.env.VUE_APP_TB_API_SECRET,
-          enableAnnotations: true,
-          enableArchiveManager: false,
-          enableSip: false,
           requireGoogleAuth: false,
           googleId: '',
-          googleHostedDomain: '',
           reportIssueLevel: 1,
+
+          opentokJsUrl: 'https://static.opentok.com/v2/js/opentok.min.js',
+
+          allowIframing: 'never',
+          isWebRTCVersion: false,
+          showTos: false,
+          chromeExtensionId: null,
+          iosAppId: null,
+
+          enableArchiving: true,
+          enableArchiveManager: false,
+          archiveAlways: false,
+          enableScreenSharing: true,
+          enableAnnotations: true,
+          enableFeedback: false,
+          enableSip: false,
+          googleHostedDomain: '',
+
+          // Sessions should not live forever. So we'll store the last time a
+          // session was used and if when we fetch it from Redis we determine
+          // it's older than this max age (in days). This is the key where that
+          // value (in days) should be stored. By default, sessions live two
+          // days.
+          maxSessionAge: 2,
+          maxSessionAgeMs: (2) * 24 * 60 * 60 * 1000,
         },
         redisRoomPrefix: '',
         roomURI: this.roomURI,
@@ -183,7 +205,6 @@ export default {
         username: this.username,
         mediaMode: 'relayed',
         newSession: 'yes',
-        sessionIdField: '',
       };
     },
   },

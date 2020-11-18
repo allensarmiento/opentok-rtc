@@ -13,15 +13,23 @@
       @mouseout="mouseoutCallControls"
     >
       <div>
-        <button id="endCall" disabled>
+        <button id="endCall" @click="endCallClicked" disabled>
           <i data-icon="end_call"></i>
         </button>
         <p>Leave Call</p>
       </div>
 
       <div>
-        <button id="toggle-publisher-video" class="selected" disabled>
-          <i data-icon="no_video"
+        <button
+          id="toggle-publisher-video"
+          :class="['selected', callControls.video.activated ? 'activated' : '']"
+          @click="togglePublisherVideo"
+          disabled
+        >
+          <i
+            :data-icon="callControls.video.activated
+              ? 'video_icon'
+              : 'no_video'"
             data-event-name="roomView:buttonClick"
             data-action="video"
             data-stream-id="publisher"
@@ -32,8 +40,13 @@
       </div>
 
       <div>
-        <button id="toggle-publisher-audio" disabled>
-          <i data-icon="mic-muted"></i>
+        <button
+          id="toggle-publisher-audio"
+          :class="callControls.audio.activated ? 'activated' : ''"
+          @click="togglePublisherAudio"
+          disabled
+        >
+          <i :data-icon="callControls.audio.activated ? 'mic' : 'mic-muted'" />
         </button>
         <p>Your Mic</p>
       </div>
@@ -62,10 +75,14 @@
 </template>
 
 <script>
+import OTHelper from '../../helpers/OTHelper';
+import Grid from '../../helpers/GridLayout';
+
 export default {
   name: 'Screen',
   props: {
     visible: { type: String, default: '' },
+    otHelper: { type: OTHelper },
   },
   data() {
     return {
@@ -76,6 +93,13 @@ export default {
 
       callControls: {
         visible: '',
+
+        video: { activated: true },
+        audio: { activated: true },
+      },
+
+      layouts: {
+        grid: Grid,
       },
     };
   },
@@ -114,6 +138,28 @@ export default {
     hideFeedbackButton() {},
     mouseoverFeedbackButton() {},
     mouseoutFeedbackButton() {},
+
+    endCallClicked() {
+      this.otHelper.disconnect();
+    },
+    togglePublisherAudio(event) {
+      const newStatus = event.detail.hasAudio;
+      const shouldToggle = !this.otHelper.isPublisherReady()
+        || this.otHelper.publisherHas('audio') !== newStatus;
+
+      if (shouldToggle) {
+        this.otHelper.togglePublisherAudio(newStatus);
+      }
+    },
+    togglePublisherVideo(event) {
+      const newStatus = event.detail.hasAudio;
+      const shouldToggle = !this.otHelper.isPublisherReady()
+        || this.otHelper.publisherHas('video') !== newStatus;
+
+      if (shouldToggle) {
+        this.otHelper.togglePublisherVideo(newStatus);
+      }
+    },
   },
 };
 </script>
