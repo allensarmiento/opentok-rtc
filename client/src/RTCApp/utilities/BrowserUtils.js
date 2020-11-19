@@ -116,3 +116,18 @@ export function isSafariIOS() {
 
   return userAgent.match(/iPad/i) || userAgent.match(/iPhone/i);
 }
+
+export function sendEvent(eventName, data, target) {
+  const dataToSend = data ? { detail: data } : {};
+  const newEvent = new CustomEvent(eventName, dataToSend);
+  (target || window).dispatchEvent(newEvent);
+}
+
+export function setTransform(style, transform) {
+  /* eslint-disable no-param-reassign */
+  style.transform = transform;
+  style.msTransform = transform;
+  style.webkitTransform = transform;
+  style.MozTransform = transform;
+  /* eslint-enable no-param-reassign */
+}

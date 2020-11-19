@@ -1,3 +1,5 @@
+import * as HTMLElems from '../utilities/htmlElems';
+
 class LayoutBase {
   constructor(container, items, type) {
     this.container = container;
@@ -24,7 +26,17 @@ class LayoutBase {
     return {};
   }
 
-  flush() {} // eslint-disable-line class-methods-use-this
+  get total() {
+    return Object.keys(this.items).length;
+  }
+
+  flush() {
+    HTMLElems.flush(this.container);
+  }
+
+  destroy() {
+    this.container = null;
+  }
 }
 
 export default LayoutBase;

@@ -77,6 +77,7 @@
 <script>
 import OTHelper from '../../helpers/OTHelper';
 import Grid from '../../helpers/GridLayout';
+import Float from '../../helpers/FloatLayout';
 
 export default {
   name: 'Screen',
@@ -100,6 +101,7 @@ export default {
 
       layouts: {
         grid: Grid,
+        float: Float,
       },
     };
   },
