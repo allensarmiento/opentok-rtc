@@ -1,8 +1,13 @@
 <template>
   <section id="screen" :style="screenVisible" @mousemove="showControls">
-    <div class="streams">
+    <div
+      ref="layoutManagerContainer"
+      class="streams"
+      @click="layoutManagerClicked"
+      @dblclick="layoutManagerClicked"
+    >
       <div class="tc-list">
-        <ul></ul>
+        <ul ref="layoutRendererContainer"></ul>
       </div>
     </div>
 
@@ -78,6 +83,8 @@
 import OTHelper from '../../helpers/OTHelper';
 import Grid from '../../helpers/GridLayout';
 import Float from '../../helpers/FloatLayout';
+import F2FHorizontal from '../../helpers/F2FHorizontal';
+import F2FVertical from '../../helpers/F2FVertical';
 
 export default {
   name: 'Screen',
@@ -102,7 +109,11 @@ export default {
       layouts: {
         grid: Grid,
         float: Float,
+        f2f_horizontal: F2FHorizontal,
+        f2f_vertical: F2FVertical,
       },
+
+      items: {},
     };
   },
   computed: {
@@ -111,6 +122,9 @@ export default {
         ? 'visibility: visible;'
         : '';
     },
+  },
+  mounted() {
+
   },
   methods: {
     showControls() {
@@ -162,6 +176,8 @@ export default {
         this.otHelper.togglePublisherVideo(newStatus);
       }
     },
+
+    layoutManagerClicked() {},
   },
 };
 </script>
