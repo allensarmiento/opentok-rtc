@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import RTCApp from './RTCApp/App.vue';
+import RTCApp from './RTCApp2/RTCApp.vue';
 
 export default {
   name: 'App',
