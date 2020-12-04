@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import TopBanner from '../components/room/TopBanner.vue';
+import TopBanner from '../components/top-banner/TopBanner.vue';
 
 export default {
   name: 'Room',
@@ -21,7 +21,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "../sass/variables.scss";
 @import "../sass/base.scss";
 
