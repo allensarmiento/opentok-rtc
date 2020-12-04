@@ -32,31 +32,42 @@
       </div>
 
       <!-- TODO: -->
-      <div v-if="enableArchiving" id="toggleArchiving" disabled>
-        <a id="startArchiving" class="btn btn-blue btn-padding">
+      <div v-if="enableArchiving" class="toggle-archiving" disabled>
+        <BlueButton
+          v-if="!isRecording"
+          id="startArchiving"
+          class="toggle-archiving__record"
+        >
           Record
-        </a>
-        <a id="stopArchiving" class="btn btn-blue btn-padding duration">
+        </BlueButton>
+        <BlueButton
+          v-else
+          id="stopArchiving"
+          class="duration toggle-archiving__stop-record"
+        >
           Stop Recording
-        </a>
+        </BlueButton>
       </div>
 
-      <div v-if="enableArchiveManager" id="manageRecordings">
-        <a id="viewRecordings" class="btn btn-blue btn-padding">
+      <div v-if="enableArchiveManager" class="manage-recordings">
+        <BlueButton id="viewRecordings" class="manage-recordings__count">
           <span id="recordings">0</span>
-        </a>
+        </BlueButton>
       </div>
     </div>
 
     <div class="layout-container">
-      <div>
-        <div id="layout-icon">
-          <a id="chooseLayout">
-            <i data-icon="layout-icon"></i>
+      <div class="layout-container__center">
+        <div id="layout-icon" class="layout-container__icon">
+          <a id="chooseLayout" class="layout-container__layout">
+            <DataIcon
+              class="layout-container__layout__icon"
+              dataIcon="layout-icon"
+            />
           </a>
         </div>
 
-        <div id="layout-label">Layout</div>
+        <div id="layout-label" class="layout-container__label">Layout</div>
       </div>
     </div>
   </section>
@@ -65,13 +76,19 @@
 <script>
 import BlueSwitch from '../core/BlueSwitch.vue';
 import DataIcon from '../core/DataIcon.vue';
+import BlueButton from '../core/BlueButton.vue';
 
 export default {
   name: 'TopBanner',
-  components: { BlueSwitch, DataIcon },
+  components: { BlueSwitch, DataIcon, BlueButton },
   props: {
-    enableArchiving: { type: Boolean, default: false },
+    enableArchiving: { type: Boolean, default: true },
     enableArchiveManager: { type: Boolean, default: false },
+  },
+  data() {
+    return {
+      isRecording: false,
+    };
   },
 };
 </script>
@@ -188,6 +205,92 @@ export default {
     }
   }
 
+  .toggle-archiving {
+    height: 4rem;
+    margin: 2.8rem 0;
+    position: relative;
+    background-color: inherit !important;
+
+    &__record {
+      height: 4rem;
+      width: 8.5rem;
+      margin-right: 3.4rem;
+      padding: 0 3.75rem;
+      box-shadow: none;
+      border-radius: .6rem;
+      font-size: 1.2rem;
+      line-height: 4rem;
+      transition: none;
+
+      @include for-size(smartphones-portrait) {
+        margin: 0;
+        padding: 0;
+        top: -2rem;
+        right: .8rem;
+        width: 11.6rem;
+      }
+    }
+
+    &__stop-record {
+      height: 4rem;
+      width: 8.5rem;
+      margin-right: 3.4rem;
+      padding: 0 3.75rem;
+      background-color: #e75758;
+      box-shadow: none;
+      border-radius: .6rem;
+      font-size: 1.2rem;
+      line-height: 4rem;
+      transition: none;
+
+      @include for-size(smartphones-portrait) {
+        margin: 0;
+        padding: 0;
+        top: -2rem;
+        right: .8rem;
+        width: 11.6rem;
+      }
+
+      &:hover, &:focus, &:active {
+        background-color: #cb4348;
+      }
+    }
+
+    @include for-size(smartphones-portrait) {
+      top: -2rem;
+      right: .8rem;
+    }
+  }
+
+  .manage-recordings {
+    display: none;
+    height: 4rem;
+    margin: 2.8rem 0;
+    position: relative;
+    background-color: inherit !important;
+
+    &__manage-recordings__count {
+      position: absolute;
+      right: 0;
+      height: 4rem;
+      width: 3.4rem;
+      margin-right: 3.4rem;
+      padding: 0;
+      background-color: #0888b3;
+      box-shadow: none;
+      border-radius: 0 .6rem .6rem 0;
+      border-left: 2px solid #3dc4f0;
+      font-size: 1.2rem;
+      line-height: 4rem;
+      transition: none;
+    }
+
+    @include for-size(smartphones-portrait) {
+      top: -2rem;
+      right: .2.6rem;
+    }
+  }
+
   @include for-size(smartphones-portrait) {
     height: 9.2rem;
     width: unset;
@@ -207,21 +310,28 @@ export default {
   text-align: center;
   border-left: .1rem solid #455b66;
 
-  @include for-size(smartphones-portrait) {
-    display: none;
-  }
-
-  #layout-icon {
+  &__icon {
     float: none;
     height: 2.2rem;
   }
 
-  #layout-label {
+  &__layout {
+    &__icon {
+      height: 2.24rem;
+      width: 2.11rem;
+    }
+  }
+
+  &__label {
     float: none;
     margin-top: .8rem;
 
     color: #c0c0c0;
     font-size: 1.2rem;
+  }
+
+  @include for-size(smartphones-portrait) {
+    display: none;
   }
 }
 </style>

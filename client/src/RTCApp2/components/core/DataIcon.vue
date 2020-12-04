@@ -1,11 +1,12 @@
 <template>
-  <i :data-icon="dataIcon" class="icon" />
+  <i :data-icon="dataIcon" :class="['icon', className]" />
 </template>
 
 <script>
 export default {
   name: 'DataIcon',
   props: {
+    className: { type: String, default: '' },
     dataIcon: { type: String, default: '' },
   },
 };
@@ -37,5 +38,9 @@ export default {
 
 [data-icon="p-mic"] {
   background-image: url(../../assets/images/icons/mic.svg);
+}
+
+[data-icon="layout-icon"] {
+  background-image: url(../../assets/images/icons/layout-icon.svg);
 }
 </style>

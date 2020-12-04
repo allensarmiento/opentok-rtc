@@ -1,11 +1,14 @@
 // Fonts
-$baseFontFamily: "Open Sans", arial;
-$baseFontWeight: 100;
-$boldFontWeight: 700;
+$base-font-family: "Open Sans", arial;
+$base-font-weight: 100;
+$bold-font-weight: 700;
 
 // Theme Colors
 $color: #007486;
 $text: #151515;
-$mainBackgroundColor: #5f6062;
+$main-background-color: #5f6062;
 
 // Breakpoints
+
+// Timing
+$transition-time: .3s;
