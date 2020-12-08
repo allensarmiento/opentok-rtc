@@ -2,12 +2,16 @@
   <div class="room" style="height: 98vh">
     <TopBanner />
     <Screen />
+    <FeedbackButton v-if="config.feedbackUrl" />
+    <Chat />
   </div>
 </template>
 
 <script>
 import TopBanner from '../components/top-banner/TopBanner.vue';
 import Screen from '../components/screen/Screen.vue';
+import FeedbackButton from '../components/feedback/FeedbackButton.vue';
+import Chat from '../components/chat/Chat.vue';
 
 export default {
   name: 'Room',
@@ -17,6 +21,8 @@ export default {
   components: {
     TopBanner,
     Screen,
+    FeedbackButton,
+    Chat,
   },
   data() {
     return {};

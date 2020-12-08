@@ -1,5 +1,11 @@
 <template>
-  <a :class="['btn btn--blue btn--padding', className]">
+  <a
+    :class="[
+      'btn btn--blue',
+      buttonPadding,
+      className
+    ]"
+  >
     <slot></slot>
   </a>
 </template>
@@ -9,6 +15,14 @@ export default {
   name: 'BlueButton',
   props: {
     className: { type: String, default: '' },
+    padding: { type: String, default: '' },
+  },
+  computed: {
+    buttonPadding() {
+      return this.padding
+        ? `btn--padding--${this.padding}`
+        : 'btn--padding';
+    },
   },
 };
 </script>

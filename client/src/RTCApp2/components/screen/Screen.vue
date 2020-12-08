@@ -6,33 +6,41 @@
       </div>
     </div>
 
-    <!-- TODO -->
     <div id="call-controls" class="call-controls">
-      <ControlsButton id="endCall" disabled>
+      <ControlsButton
+        id="endCall"
+        dataIcon="end_call"
+        buttonColor="red"
+        disabled
+      >
         Leave Call
       </ControlsButton>
 
-      <ControlsButton id="toggle-publisher-video">
+      <ControlsButton id="toggle-publisher-video" dataIcon="no_video">
         Your Video
       </ControlsButton>
 
-      <ControlsButton id="toggle-publisher-audio">
+      <ControlsButton id="toggle-publisher-audio" dataIcon="mic-muted">
         Your Mic
       </ControlsButton>
 
-      <ControlsButton id="addToCall">
+      <ControlsButton id="addToCall" dataIcon="add">
         Invite
       </ControlsButton>
 
-      <ControlsButton v-if="enableScreensharing" id="screen-share">
+      <ControlsButton
+        v-if="enableScreensharing"
+        id="screen-share"
+        dataIcon="screenshare"
+      >
         Share Screen
       </ControlsButton>
 
-      <ControlsButton v-if="enableAnnotation" id="annotate">
+      <ControlsButton v-if="enableAnnotation" id="annotate" dataIcon="annotate">
         Annotate
       </ControlsButton>
 
-      <ControlsButton id="message-btn">
+      <ControlsButton id="message-btn" dataIcon="message">
         Message&nbsp;
         <span id="unreadMsg">
           (<span id="unreadCount">0</span>)
@@ -97,7 +105,6 @@ export default {
   background-repeat: no-repeat;
   // opacity: 0;
   transition: all $transition-time;
-  // TODO
 
   @include for-size(smartphones-portrait) {
     right: 0;
