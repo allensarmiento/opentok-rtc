@@ -5,6 +5,8 @@
       buttonPadding,
       className
     ]"
+    :data-icon="dataIcon"
+    :type="type"
   >
     <slot></slot>
   </a>
@@ -16,6 +18,8 @@ export default {
   props: {
     className: { type: String, default: '' },
     padding: { type: String, default: '' },
+    dataIcon: { type: String, default: '' },
+    type: { type: String, default: '' },
   },
   computed: {
     buttonPadding() {
@@ -29,6 +33,10 @@ export default {
 
 <style lang="scss" scoped>
 @import "../../sass/variables.scss";
+
+[data-icon="send"] {
+  background-image: url(../../assets/images/icons/send.svg);
+}
 
 .btn {
   display: inline-block;

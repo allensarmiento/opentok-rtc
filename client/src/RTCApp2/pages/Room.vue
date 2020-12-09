@@ -4,6 +4,16 @@
     <Screen />
     <FeedbackButton v-if="config.feedbackUrl" />
     <Chat />
+    <ScreenShareErrors v-if="false" />
+    <Bubbles v-if="false" />
+
+    <!--
+      TODO:
+        - Feedback report modal
+        - Archive delete modal
+        - Add to call modal
+        - Switch alert modal
+    -->
   </div>
 </template>
 
@@ -12,6 +22,8 @@ import TopBanner from '../components/top-banner/TopBanner.vue';
 import Screen from '../components/screen/Screen.vue';
 import FeedbackButton from '../components/feedback/FeedbackButton.vue';
 import Chat from '../components/chat/Chat.vue';
+import ScreenShareErrors from '../components/screen-share/Errors.vue';
+import Bubbles from '../components/bubbles/Bubbles.vue';
 
 export default {
   name: 'Room',
@@ -23,6 +35,8 @@ export default {
     Screen,
     FeedbackButton,
     Chat,
+    ScreenShareErrors,
+    Bubbles,
   },
   data() {
     return {};

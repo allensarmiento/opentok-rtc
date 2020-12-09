@@ -110,6 +110,10 @@ export default {
 
 // Chat
 [data-icon="close_blue"] {
+  height: 2.7rem;
+  width: 3.2rem;
+  margin-left: 2.6rem;
+  margin-right: 1.4rem;
   background-image: url(../../assets/images/icons/close_blue.svg);
 }
 
