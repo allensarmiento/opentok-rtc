@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <RTCApp />
+    <RTCApp :config="config" />
   </div>
 </template>
 
@@ -11,6 +11,34 @@ export default {
   name: 'App',
   components: {
     RTCApp,
+  },
+  data() {
+    return {
+      config: {
+        showTos: false,
+        OpenTok: {
+          apiKey: '',
+          apiSecret: '',
+        },
+        Archiving: {
+          enabled: false,
+          archiveManager: {
+            enabled: false,
+          },
+        },
+        Feedback: {
+          url: '',
+          reportIssueLevel: 0,
+        },
+        Screensharing: {
+          enabled: true,
+          chromeExtensionId: null,
+          annotations: {
+            enabled: true,
+          },
+        },
+      },
+    };
   },
 };
 </script>

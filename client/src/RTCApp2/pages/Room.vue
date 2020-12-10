@@ -1,7 +1,9 @@
 <template>
   <div class="room" style="height: 98vh">
     <TopBanner />
-    <Screen />
+    <Screen
+      :config="config"
+    />
     <FeedbackButton v-if="config.feedbackUrl" />
     <Chat />
     <ScreenShareErrors v-if="false" />

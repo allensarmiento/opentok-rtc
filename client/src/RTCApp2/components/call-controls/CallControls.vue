@@ -5,12 +5,7 @@
     @mouseover="mouseoverCallControls"
     @mouseout="mouseoutCallControls"
   >
-    <ControlsButton
-      id="endCall"
-      dataIcon="end_call"
-      buttonColor="red"
-      disabled
-    >
+    <ControlsButton id="endCall" dataIcon="end_call" buttonColor="red">
       Leave Call
     </ControlsButton>
 
@@ -68,7 +63,6 @@ export default {
   watch: {
     show(shouldShow) {
       if (shouldShow) this.showControls();
-      else this.hideCallControls();
     },
   },
   methods: {
@@ -76,7 +70,6 @@ export default {
       this.showCallControls();
     },
     showCallControls() {
-      console.log('Show Call controls');
       this.visible = true;
 
       if (!this.overCallControls && !this.hideCallControlsTimer) {
@@ -89,13 +82,13 @@ export default {
     hideCallControls() {
       this.hideCallControlsTimer = null;
       this.visible = false;
+      this.$emit('hide');
     },
     mouseoverCallControls() {
       clearTimeout(this.hideCallControlsTimer);
       this.overCallControls = true;
     },
     mouseoutCallControls() {
-      console.log('mouseoutCallControls');
       this.overCallControls = false;
       this.hideCallControls();
     },

@@ -1,12 +1,17 @@
 <template>
-  <section class="screen" @mousemove="mousemove" @mouseout="mouseout">
+  <section class="screen" @mousemove="mousemove">
     <div class="screen__streams">
       <div class="tc-list">
         <ul></ul>
       </div>
     </div>
 
-    <CallControls :show="showControls" />
+    <CallControls
+      :show="showControls"
+      :enableScreensharing="enableScreensharing"
+      :enableAnnotation="enableAnnotation"
+      @hide="hideControls"
+    />
   </section>
 </template>
 
@@ -16,23 +21,49 @@ import CallControls from '../call-controls/CallControls.vue';
 export default {
   name: 'Screen',
   components: { CallControls },
-  props: {},
+  props: {
+    config: { type: Object, default: () => ({}) },
+  },
   data() {
     return {
       showControls: false,
       hideControlsTimer: null,
     };
   },
+  computed: {
+    enableScreensharing() {
+      let enabled = false;
+
+      if ('Screensharing' in this.config) {
+        const { Screensharing } = this.config;
+        if ('enabled' in Screensharing) {
+          enabled = Screensharing.enabled;
+        }
+      }
+
+      return enabled;
+    },
+    enableAnnotation() {
+      let enabled = false;
+
+      if ('Screensharing' in this.config) {
+        const { Screensharing } = this.config;
+        if ('annotations' in Screensharing) {
+          const { annotations } = Screensharing;
+          if ('enabled' in annotations) {
+            enabled = annotations.enabled;
+          }
+        }
+      }
+
+      return enabled;
+    },
+  },
   methods: {
     mousemove() {
       this.showControls = true;
-      // this.hideControlsTimer = setTimeout(this.hideControls, 3000);
-    },
-    mouseout() {
-      this.showControls = false;
     },
     hideControls() {
-      this.hideControlsTimer = null;
       this.showControls = false;
     },
   },
