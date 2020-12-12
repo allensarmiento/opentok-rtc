@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const OpenTok = require('opentok');
@@ -8,6 +9,43 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
+
+app.post('/credentials', function(req, res) {
+  const apiKey = process.env.API_KEY || '';
+  const apiSecret = process.env.API_SECRET || '';
+
+  if (!apiKey || !apiSecret) {
+    return res.status(500).send();
+  }
+
+  return res.json({ apiKey, apiSecret });
+});
+
+app.post('/sessionInfo', function(req, res) {
+  const apiKey = process.env.API_KEY || '';
+  const apiSecret = process.env.API_SECRET || '';
+
+  // Set the following constants with the API key and API secret
+  // that you receive when you sign up to use the OpenTok API:
+  const opentok = new OpenTok(apiKey, apiSecret);
+
+  //Generate a basic session. Or you could use an existing session ID.
+  let sessionId;
+  opentok.createSession({}, function(error, session) {
+    if (error) {
+      console.log("Error creating session:", error)
+      res.status(500).send();
+    } else {
+      sessionId = session.sessionId;
+      console.log("Session ID: " + sessionId);
+    }
+  });
+
+  const token = opentok.generateToken(sessionId);
+
+  return res.json({ sessionId, token });
+});
+
 
 app.post('/precall', function(req, res) {
   const { apiKey, apiSecret } = req.body;
@@ -131,3 +169,4 @@ function getUsableSessionInfo(mediaMode, maxSessionAge, archiveAlways, sessionIn
 
 const port = 5000;
 app.listen(port, () => console.log(`Listening on port ${port}`));
+

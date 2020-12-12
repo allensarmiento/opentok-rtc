@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import RTCApp from './RTCApp2/RTCApp.vue';
 
 export default {
@@ -39,6 +40,13 @@ export default {
         },
       },
     };
+  },
+  async mounted() {
+    const response = await axios.post('localhost:5000/credentials');
+    const { data } = response;
+
+    this.config.OpenTok.apiKey = data.apiKey;
+    this.config.OpenTok.apiSecret = data.apiSecret;
   },
 };
 </script>
