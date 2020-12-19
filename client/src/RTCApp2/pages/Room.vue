@@ -3,6 +3,8 @@
     <TopBanner />
     <Screen
       :config="config"
+      :opentokApiKey="opentokApiKey"
+      :opentokApiSecret="opentokApiSecret"
     />
     <FeedbackButton v-if="config.feedbackUrl" />
     <Chat />
@@ -31,6 +33,8 @@ export default {
   name: 'Room',
   props: {
     config: { type: Object, default: () => ({}) },
+    opentokApiKey: { type: String, default: '' },
+    opentokApiSecret: { type: String, default: '' },
   },
   components: {
     TopBanner,

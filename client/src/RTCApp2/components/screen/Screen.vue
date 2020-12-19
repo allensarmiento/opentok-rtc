@@ -3,9 +3,8 @@
     <div class="screen__streams">
       <div class="tc-list">
         <Video
-          :apiKey="config.OpenTok.apiKey"
-          :sessionId="sessionId"
-          :token="token"
+          :apiKey="opentokApiKey"
+          :apiSecret="opentokApiSecret"
         />
       </div>
     </div>
@@ -20,7 +19,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import Video from '../video/Video.vue';
 import CallControls from '../call-controls/CallControls.vue';
 
@@ -29,22 +27,14 @@ export default {
   components: { Video, CallControls },
   props: {
     config: { type: Object, default: () => ({}) },
+    opentokApiKey: { type: String, default: '' },
+    opentokApiSecret: { type: String, default: '' },
   },
   data() {
     return {
       showControls: false,
       hideControlsTimer: null,
-
-      sessionId: '',
-      token: '',
     };
-  },
-  async mounted() {
-    const response = await axios.post('localhost:5000/sessionInfo');
-    const { data } = response;
-
-    this.sessionId = data.sessionId;
-    this.token = data.token;
   },
   computed: {
     enableScreensharing() {

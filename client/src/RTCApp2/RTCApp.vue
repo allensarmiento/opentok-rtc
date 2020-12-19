@@ -1,5 +1,9 @@
 <template>
-  <Room :config="appConfig" />
+  <Room
+    :config="appConfig"
+    :opentokApiKey="opentokApiKey"
+    :opentokApiSecret="opentokApiSecret"
+  />
 </template>
 
 <script>
@@ -10,6 +14,8 @@ export default {
   components: { Room },
   props: {
     config: { type: Object, default: () => ({}) },
+    opentokApiKey: { type: String, default: '' },
+    opentokApiSecret: { type: String, default: '' },
   },
   data() {
     return {

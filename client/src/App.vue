@@ -1,6 +1,11 @@
 <template>
   <div id="app">
-    <RTCApp :config="config" />
+    <RTCApp
+      v-if="opentokApiKey && opentokApiSecret"
+      :config="config"
+      :opentokApiKey="opentokApiKey"
+      :opentokApiSecret="opentokApiSecret"
+    />
   </div>
 </template>
 
@@ -15,6 +20,9 @@ export default {
   },
   data() {
     return {
+      opentokApiKey: '',
+      opentokApiSecret: '',
+
       config: {
         showTos: false,
         OpenTok: {
@@ -42,11 +50,10 @@ export default {
     };
   },
   async mounted() {
-    const response = await axios.post('localhost:5000/credentials');
-    const { data } = response;
-
-    this.config.OpenTok.apiKey = data.apiKey;
-    this.config.OpenTok.apiSecret = data.apiSecret;
+    const response = await axios.post('http://localhost:5000/credentials');
+    const { apiKey, apiSecret } = response.data;
+    this.opentokApiKey = apiKey;
+    this.opentokApiSecret = apiSecret;
   },
 };
 </script>

@@ -3,12 +3,76 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const OpenTok = require('opentok');
 const ServerPersistence = require('./utilities/ServerPersistence');
+const Redis = require('ioredis');
 const cors = require('cors');
+const CONNECT_REDIS_TIMEOUT = 5000;
+
+const redis = new Redis(
+  'redis://localhost:6379',
+  { connectTimeout: CONNECT_REDIS_TIMEOUT },
+);
+
+const connectRedisTimeoutInterval = setInterval(() => {
+  throw new Error(`Redis connection timed out.`);
+}, CONNECT_REDIS_TIMEOUT);
+
+redis.on('ready', () => {
+  console.log('Successfully connected to Redis and DB is ready.');
+  clearInterval(connectRedisTimeoutInterval);
+});
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
+
+app.post('/room/:roomName/info', function(req, res) {
+  const {
+    apiKey,
+    apiSecret,
+    newSession,
+    roomName,
+  } = req.body;
+
+  if (!apiKey || !apiSecret || !roomName) {
+    console.log('Invalid credentials');
+    return res.status(500).json({ error: 'Invalid credentials or room name' });
+  }
+
+  const opentok = new OpenTok(apiKey, apiSecret);
+
+  let sessionId, token;
+  
+  redis.get(roomName, (error, result) => {
+    if (error) {
+      console.error(error);
+    } else {
+      sessionId = result;
+
+      if (sessionId) {
+        console.log('SESSION ID EXISTS', sessionId);
+        token = opentok.generateToken(sessionId);
+        return res.json({ sessionId, token });
+      } else {
+        console.log('SESSION ID DOES NOT EXIST');
+        opentok.createSession({ mediaMode: 'routed' }, (error, session) => {
+          if (error) {
+            console.log(error);
+            return res.status(500).json({ error: `createSession error ${error}` });
+          }
+    
+          sessionId = session.sessionId
+          redis.set(roomName, sessionId, (error, reply) => {
+            if (error) console.log(error);
+            else console.log(reply);
+          });
+          token = opentok.generateToken(sessionId);
+          return res.json({ sessionId, token });
+        });
+      }  
+    }
+  });
+});
 
 app.post('/credentials', function(req, res) {
   const apiKey = process.env.API_KEY || '';
@@ -22,8 +86,10 @@ app.post('/credentials', function(req, res) {
 });
 
 app.post('/sessionInfo', function(req, res) {
-  const apiKey = process.env.API_KEY || '';
-  const apiSecret = process.env.API_SECRET || '';
+  const { apiKey, apiSecret } = req.body;
+  if (!apiKey || !apiSecret) {
+    return res.status(500).json({ error: 'No valid api key or secret' });
+  }
 
   // Set the following constants with the API key and API secret
   // that you receive when you sign up to use the OpenTok API:
@@ -31,7 +97,7 @@ app.post('/sessionInfo', function(req, res) {
 
   //Generate a basic session. Or you could use an existing session ID.
   let sessionId;
-  opentok.createSession({}, function(error, session) {
+  opentok.createSession({ mediaMode: 'routed' }, function(error, session) {
     if (error) {
       console.log("Error creating session:", error)
       res.status(500).send();
