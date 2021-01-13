@@ -6,7 +6,7 @@
 
 <script>
 import axios from 'axios';
-import RTCApp from '@/views/RTCApp.vue';
+import RTCApp from '@/pages/RTCApp.vue';
 
 export default {
   name: 'App',
@@ -22,7 +22,7 @@ export default {
           apiSecret: '',
         },
         Archiving: {
-          enabled: true,
+          enabled: false,
           archiveManager: {
             enabled: false,
           },
