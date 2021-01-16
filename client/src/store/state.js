@@ -23,11 +23,15 @@ export default () => ({
       },
     },
   },
+
   callControls: {
     show: false,
     visible: false,
     over: false,
     hideTimer: null,
   },
+
   roomName: 'test',
+
+  layoutType: 'hangout_vertical',
 });

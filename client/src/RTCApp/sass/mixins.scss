@@ -1,0 +1,28 @@
+@mixin for-size($size) {
+  @if $size == smartphones {
+    @media 
+      only screen and (max-width: 48rem),
+      only screen and (min-device-pixel-ratio: 1.5) { 
+        @content; 
+      }
+  } @else if $size == smartphones-landscape {
+    @media 
+      only screen and (max-width: 48rem),
+      only screen and (min--moz-device-pixel-ratio: 1.5),
+      only screen and (min-device-pixel-ratio: 1.5),
+      only screen and (orientation: landscape) and (max-width: 48rem),
+      only screen and (orientation: landscape)
+        and (min-device-pixel-ratio: 1.5) {
+        @content; 
+      }
+  } @else if $size == smartphones-portrait {
+    @media 
+      only screen and (max-width: 48rem),
+      only screen and (min-device-pixel-ratio: 1.5),
+      only screen and (orientation: portrait) and (max-width: 48rem),
+      only screen and (orientation: portrait)
+        and (min-device-pixel-ratio: 1.5) { 
+        @content; 
+      }
+  }
+}

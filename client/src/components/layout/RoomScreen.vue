@@ -17,7 +17,10 @@ import CallControls from './CallControls.vue';
 
 export default {
   name: 'RoomScreen',
-  components: { VideoSession, CallControls },
+  components: {
+    VideoSession,
+    CallControls,
+  },
   computed: {
     ...mapState('RTCApp', ['config', 'callControls']),
   },
@@ -33,6 +36,7 @@ export default {
 .screen {
   flex: 1;
   position: relative;
+  height: calc("100% - 11.2rem");
   margin-top: 9.8rem;
   padding: 1.5rem 1.5rem 0 2rem;
   background-color: #5f6062;
