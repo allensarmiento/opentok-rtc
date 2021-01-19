@@ -57,7 +57,7 @@ export default {
     LayoutContainer,
   },
   computed: {
-    ...mapState('RTCApp', ['config']),
+    ...mapState('rtcApp', ['config']),
   },
 };
 </script>

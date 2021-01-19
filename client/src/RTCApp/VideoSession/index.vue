@@ -22,7 +22,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('RTCApp', ['config', 'roomName']),
+    ...mapState('rtcApp', ['config', 'roomName']),
     credentialsValid() {
       return this.config.OpenTok.apiKey && this.sessionId && this.token;
     },

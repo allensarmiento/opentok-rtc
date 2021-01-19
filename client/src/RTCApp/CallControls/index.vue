@@ -19,9 +19,13 @@
       <template v-slot:description>Your Video</template>
     </ControlsButton>
 
-    <ControlsButton id="toggle-publisher-audio">
+    <ControlsButton
+      id="toggle-publisher-audio"
+      :active="publishAudio"
+      @click.native="publishAudioClicked"
+    >
       <template v-slot:button>
-        <DataIcon dataIcon="mic-muted" />
+        <DataIcon :dataIcon="publishAudio ? 'mic' : 'mic-muted'" />
       </template>
       <template v-slot:description>Your Mic</template>
     </ControlsButton>
@@ -75,48 +79,56 @@ export default {
     ControlsButton,
     DataIcon,
   },
-  data() {
-    return {
-      visible: false,
-      overControls: false,
-      hideControlsTimer: null,
-    };
-  },
   watch: {
-    callControls: {
-      deep: true,
-      handler() {
-        if (this.callControls.show) this.showControls();
-      },
+    show(value) {
+      if (value) this.showControls();
     },
   },
   computed: {
-    ...mapState('RTCApp', ['config', 'callControls']),
+    ...mapState('rtcApp', ['config']),
+    ...mapState('rtcApp/callControls', [
+      'show',
+      'visible',
+      'over',
+      'hideTimer',
+    ]),
+    ...mapState('rtcApp/videoSession', ['publishAudio']),
     visibleClass() {
       return this.visible ? 'visible' : '';
     },
   },
   methods: {
-    ...mapActions('RTCApp', ['mouseoverCallControls']),
+    ...mapActions('rtcApp/callControls', [
+      'mouseover',
+      'setVisible',
+      'setOver',
+      'setHideTimer',
+    ]),
+    ...mapActions('rtcApp/videoSession', ['setPublishAudio']),
     showControls() {
-      this.visible = true;
+      this.setVisible(true);
 
-      if (!this.overControls && !this.hideControlsTimer) {
-        this.hideControlsTimer = setTimeout(this.hideControls, 3000);
+      if (!this.over && !this.hideTimer) {
+        this.setHideTimer(setTimeout(this.hideControls, 3000));
       }
     },
     hideControls() {
-      this.hideControlsTimer = null;
-      this.visible = false;
-      this.mouseoverCallControls(false);
+      this.setHideTimer(null);
+      this.setVisible(false);
+      this.mouseover(false);
     },
     mouseoverControls() {
-      clearTimeout(this.hideControlsTimer);
-      this.overControls = true;
+      clearTimeout(this.hideTimer);
+      this.setOver(true);
     },
     mouseoutControls() {
-      this.overControls = false;
+      this.setOver(false);
       this.hideControls();
+    },
+    publishAudioClicked() {
+      console.log('Publish Audio Clicked');
+      this.setPublishAudio(!this.publishAudio);
+      console.log(this.publishAudio);
     },
   },
 };
@@ -172,6 +184,13 @@ export default {
   height: 3rem;
   width: 3rem;
   background-image: url(../assets/images/icons/no_video.svg);
+}
+
+::v-deep [data-icon="mic"] {
+  height: 3rem;
+  width: 3.1rem;
+  margin-top: .6rem;
+  background-image: url(../assets/images/icons/mic.svg);
 }
 
 ::v-deep [data-icon="mic-muted"] {

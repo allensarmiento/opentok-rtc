@@ -17,8 +17,19 @@ export default {
     session: { type: OT.session },
     options: { type: Object, default: () => ({}) },
   },
+  watch: {
+    options(value) {
+      const { publishAudio } = value;
+      this.publisher.publishAudio(publishAudio);
+    },
+  },
+  data() {
+    return {
+      publisher: null,
+    };
+  },
   mounted() {
-    const publisher = OT.initPublisher(this.$el, this.options, (error) => {
+    this.publisher = OT.initPublisher(this.$el, this.options, (error) => {
       if (error) {
         this.$emit('error', error);
       } else {
@@ -26,13 +37,13 @@ export default {
       }
     });
 
-    this.$emit('publisherCreated', publisher);
+    this.$emit('publisherCreated', this.publisher);
     const publish = () => {
-      this.session.publish(publisher, (error) => {
+      this.session.publish(this.publisher, (error) => {
         if (error) {
           this.$emit('error', error);
         } else {
-          this.$emit('publisherConnected', publisher);
+          this.$emit('publisherConnected', this.publisher);
         }
       });
     };

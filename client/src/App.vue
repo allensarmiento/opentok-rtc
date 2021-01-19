@@ -6,7 +6,7 @@
 
 <script>
 import axios from 'axios';
-import RTCApp from './RTCApp';
+import RTCApp from './RTCApp/index.vue';
 
 export default {
   name: 'App',

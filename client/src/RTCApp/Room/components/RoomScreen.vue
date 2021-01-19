@@ -1,5 +1,5 @@
 <template>
-  <section class="screen" @mousemove="mouseoverCallControls(true)">
+  <section class="screen" @mousemove="mouseover(true)">
     <div class="streams">
       <div class="tc-list">
         <VideoSession />
@@ -12,8 +12,8 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import VideoSession from '../../VideoSession';
-import CallControls from '../../CallControls';
+import VideoSession from '../../VideoSession/index.vue';
+import CallControls from '../../CallControls/index.vue';
 
 export default {
   name: 'RoomScreen',
@@ -22,10 +22,10 @@ export default {
     CallControls,
   },
   computed: {
-    ...mapState('RTCApp', ['config', 'callControls']),
+    ...mapState('rtcApp/callControls', ['config']),
   },
   methods: {
-    ...mapActions('RTCApp', ['mouseoverCallControls']),
+    ...mapActions('rtcApp/callControls', ['mouseover']),
   },
 };
 </script>

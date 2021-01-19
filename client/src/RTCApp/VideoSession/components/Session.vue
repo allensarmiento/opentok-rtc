@@ -2,6 +2,7 @@
   <ul id="session" @error="errorHandler">
     <Publisher
       :session="session"
+      :options="publisherOptions"
       @error="errorHandler"
     />
 
@@ -16,6 +17,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import OT from '@opentok/client';
 import Publisher from './Publisher.vue';
 import Subscriber from './Subscriber.vue';
@@ -33,6 +35,15 @@ export default {
       session: null,
       streams: [],
     };
+  },
+  computed: {
+    ...mapState('rtcApp/videoSession', ['publishAudio', 'publishVideo']),
+    publisherOptions() {
+      return {
+        publishAudio: this.publishAudio,
+        publishVideo: this.publishVideo,
+      };
+    },
   },
   created() {
     this.session = OT.initSession(this.apiKey, this.sessionId);

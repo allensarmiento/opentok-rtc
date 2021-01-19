@@ -1,5 +1,15 @@
 export default {
-  mouseoverCallControls(state, value) {
-    state.callControls.show = value;
-  }
+  mouseover(state, value) {
+    state.show = value;
+  },
+
+  setVisible(state, value) {
+    state.visible = value;
+  },
+  setOver(state, value) {
+    state.over = value;
+  },
+  setHideTimer(state, value) {
+    state.hideTimer = value;
+  },
 };

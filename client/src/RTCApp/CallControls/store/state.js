@@ -1,5 +1,6 @@
 export default () => ({
   show: false,
+
   visible: false,
   over: false,
   hideTimer: null,

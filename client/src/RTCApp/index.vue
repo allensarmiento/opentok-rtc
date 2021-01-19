@@ -4,7 +4,7 @@
 
 <script>
 import { mapActions } from 'vuex';
-import Room from './Room';
+import Room from './Room/index.vue';
 
 export default {
   name: 'RTCApp',
@@ -24,7 +24,7 @@ export default {
     this.mounted = true;
   },
   methods: {
-    ...mapActions('RTCApp', ['setConfig']),
+    ...mapActions('rtcApp', ['setConfig']),
   },
 };
 </script>

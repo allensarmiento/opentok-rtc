@@ -7,14 +7,14 @@
 
 <script>
 import { mapState } from 'vuex';
-import TopBanner from './components/layout/TopBanner.vue';
-import RoomScreen from './components/layout/RoomScreen.vue';
+import TopBanner from './components/TopBanner.vue';
+import RoomScreen from './components/RoomScreen.vue';
 
 export default {
   name: 'RoomPage',
   components: { TopBanner, RoomScreen },
   computed: {
-    ...mapState('RTCApp', ['config']),
+    ...mapState('rtcApp', ['config']),
   },
 };
 </script>
