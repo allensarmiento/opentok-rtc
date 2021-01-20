@@ -1,4 +1,4 @@
 export default () => ({
-  publishAudio: true,
+  publishAudio: false,
   publishVideo: false,
 });

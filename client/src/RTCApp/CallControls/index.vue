@@ -5,54 +5,12 @@
     @mouseover="mouseoverControls"
     @mouseout="mouseoutControls"
   >
-    <ControlsButton id="endCall" color="red">
-      <template v-slot:button>
-        <DataIcon dataIcon="end_call" />
-      </template>
-      <template v-slot:description>Leave Call</template>
-    </ControlsButton>
-
-    <ControlsButton id="toggle-publisher-video">
-      <template v-slot:button>
-        <DataIcon dataIcon="no_video" />
-      </template>
-      <template v-slot:description>Your Video</template>
-    </ControlsButton>
-
-    <ControlsButton
-      id="toggle-publisher-audio"
-      :active="publishAudio"
-      @click.native="publishAudioClicked"
-    >
-      <template v-slot:button>
-        <DataIcon :dataIcon="publishAudio ? 'mic' : 'mic-muted'" />
-      </template>
-      <template v-slot:description>Your Mic</template>
-    </ControlsButton>
-
-    <ControlsButton id="addToCall">
-      <template v-slot:button>
-        <DataIcon dataIcon="add" />
-      </template>
-      <template v-slot:description>Invite</template>
-    </ControlsButton>
-
-    <ControlsButton v-if="config.Screensharing.enabled" id="screen-share">
-      <template v-slot:button>
-        <DataIcon dataIcon="screenshare" />
-      </template>
-      <template v-slot:description>Share Screen</template>
-    </ControlsButton>
-
-    <ControlsButton
-      v-if="config.Screensharing.annotations.enabled"
-      id="annotate"
-    >
-      <template v-slot:button>
-        <DataIcon dataIcon="annotate" />
-      </template>
-      <template v-slot:description>Annotate</template>
-    </ControlsButton>
+    <LeaveCallControl />
+    <VideoControl />
+    <MicControl />
+    <InviteControl />
+    <ScreenshareControl v-if="config.Screensharing.enabled" />
+    <AnnotateControl v-if="config.Screensharing.annotations.enabled" />
 
     <ControlsButton id="message-btn">
       <template v-slot:button>
@@ -72,12 +30,24 @@
 import { mapState, mapActions } from 'vuex';
 import ControlsButton from './components/ControlsButton.vue';
 import DataIcon from '../ui/DataIcon.vue';
+import LeaveCallControl from './components/LeaveCallControl.vue';
+import VideoControl from './components/VideoControl.vue';
+import MicControl from './components/MicControl.vue';
+import InviteControl from './components/InviteControl.vue';
+import ScreenshareControl from './components/ScreenshareControl.vue';
+import AnnotateControl from './components/AnnotateControl.vue';
 
 export default {
   name: 'CallControls',
   components: {
     ControlsButton,
     DataIcon,
+    LeaveCallControl,
+    VideoControl,
+    MicControl,
+    InviteControl,
+    ScreenshareControl,
+    AnnotateControl,
   },
   watch: {
     show(value) {
@@ -92,7 +62,6 @@ export default {
       'over',
       'hideTimer',
     ]),
-    ...mapState('rtcApp/videoSession', ['publishAudio']),
     visibleClass() {
       return this.visible ? 'visible' : '';
     },
@@ -104,7 +73,6 @@ export default {
       'setOver',
       'setHideTimer',
     ]),
-    ...mapActions('rtcApp/videoSession', ['setPublishAudio']),
     showControls() {
       this.setVisible(true);
 
@@ -124,11 +92,6 @@ export default {
     mouseoutControls() {
       this.setOver(false);
       this.hideControls();
-    },
-    publishAudioClicked() {
-      console.log('Publish Audio Clicked');
-      this.setPublishAudio(!this.publishAudio);
-      console.log(this.publishAudio);
     },
   },
 };
@@ -150,7 +113,7 @@ export default {
   margin: auto;
   padding: 0 4rem;
   z-index: 1001;
-  background-image: url(../assets/images/call-controls-bg.svg);
+  background-image: url(./assets/call-controls-bg.svg);
   background-repeat: no-repeat;
   opacity: 0;
   transition: all $transition-time;
@@ -174,53 +137,9 @@ export default {
   }
 }
 
-::v-deep [data-icon="end_call"] {
-  height: 2.1rem;
-  width: 3.4rem;
-  background-image: url(../assets/images/icons/hang-up.svg);
-}
-
-::v-deep [data-icon="no_video"] {
-  height: 3rem;
-  width: 3rem;
-  background-image: url(../assets/images/icons/no_video.svg);
-}
-
-::v-deep [data-icon="mic"] {
-  height: 3rem;
-  width: 3.1rem;
-  margin-top: .6rem;
-  background-image: url(../assets/images/icons/mic.svg);
-}
-
-::v-deep [data-icon="mic-muted"] {
-  height: 3rem;
-  width: 3.1rem;
-  margin-left: .3rem;
-  background-image: url(../assets/images/icons/mic-muted.svg);
-}
-
-::v-deep [data-icon="add"] {
-  height: 2.8rem;
-  width: 2.7rem;
-  background-image: url(../assets/images/icons/add.svg);
-}
-
-::v-deep [data-icon="screenshare"] {
-  height: 2.9rem;
-  width: 3.7rem;
-  background-image: url(../assets/images/icons/screenshare.svg);
-}
-
-::v-deep [data-icon="annotate"] {
-  height: 2.2rem;
-  width: 2.2rem;
-  background-image: url(../assets/images/icons/annotate.svg);
-}
-
 ::v-deep [data-icon="message"] {
   height: 2rem;
   width: 2.4rem;
-  background-image: url(../assets/images/icons/message.svg);
+  background-image: url(./assets/message.svg);
 }
 </style>

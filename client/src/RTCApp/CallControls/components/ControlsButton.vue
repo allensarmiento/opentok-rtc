@@ -36,7 +36,7 @@ export default {
 }
 
 .button {
-  background-image: url(../../assets/images/icons/inactive-circle.svg);
+  background-image: url(../assets/inactive-circle.svg);
   width: 5.42rem;
   height: 5.42rem;
   vertical-align: top;
@@ -47,11 +47,11 @@ export default {
 }
 
 .red {
-  background-image: url(../../assets/images/icons/red-circle.svg);
+  background-image: url(../assets/red-circle.svg);
 }
 
 .active {
-  background-image: url(../../assets/images/icons/active-circle.svg);
+  background-image: url(../assets/active-circle.svg);
 }
 
 .description {

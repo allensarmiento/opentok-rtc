@@ -19,8 +19,9 @@ export default {
   },
   watch: {
     options(value) {
-      const { publishAudio } = value;
+      const { publishAudio, publishVideo } = value;
       this.publisher.publishAudio(publishAudio);
+      this.publisher.publishVideo(publishVideo);
     },
   },
   data() {
