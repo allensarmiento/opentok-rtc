@@ -3,6 +3,7 @@
     <Publisher
       :session="session"
       :options="publisherOptions"
+      :isScreensharing="isScreensharing"
       @error="errorHandler"
     />
 
@@ -37,7 +38,11 @@ export default {
     };
   },
   computed: {
-    ...mapState('rtcApp/videoSession', ['publishAudio', 'publishVideo']),
+    ...mapState('rtcApp/videoSession', [
+      'publishAudio',
+      'publishVideo',
+      'isScreensharing',
+    ]),
     publisherOptions() {
       return {
         publishAudio: this.publishAudio,

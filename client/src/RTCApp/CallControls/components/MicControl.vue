@@ -5,7 +5,7 @@
     @click.native="setPublishAudio(!publishAudio)"
   >
     <template v-slot:button>
-      <DataIcon :dataIcon="publishVideo ? 'mic' : 'mic-muted'" />
+      <DataIcon :dataIcon="publishAudio ? 'mic' : 'mic-muted'" />
     </template>
     <template v-slot:description>Your Mic</template>
   </ControlsButton>

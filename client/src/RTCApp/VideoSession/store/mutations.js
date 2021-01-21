@@ -5,4 +5,7 @@ export default {
   setPublishVideo(state, value) {
     state.publishVideo = value;
   },
+  setIsScreensharing(state, value) {
+    state.isScreensharing = value;
+  },
 };

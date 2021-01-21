@@ -5,4 +5,7 @@ export default {
   setPublishVideo({ commit }, value) {
     commit('setPublishVideo', value);
   },
+  setIsScreensharing({ commit }, value) {
+    commit('setIsScreensharing', value);
+  },
 };

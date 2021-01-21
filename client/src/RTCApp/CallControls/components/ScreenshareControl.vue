@@ -1,5 +1,9 @@
 <template>
-  <ControlsButton id="screen-share">
+  <ControlsButton
+    id="screen-share"
+    :active="isScreensharing"
+    @click.native="setIsScreensharing(!isScreensharing)"
+  >
     <template v-slot:button>
       <DataIcon dataIcon="screenshare" />
     </template>
@@ -8,12 +12,19 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
 import ControlsButton from './ControlsButton.vue';
 import DataIcon from '../../ui/DataIcon.vue';
 
 export default {
   name: 'ScreenshareControl',
   components: { ControlsButton, DataIcon },
+  computed: {
+    ...mapState('rtcApp/videoSession', ['isScreensharing']),
+  },
+  methods: {
+    ...mapActions('rtcApp/videoSession', ['setIsScreensharing']),
+  },
 };
 </script>
 
