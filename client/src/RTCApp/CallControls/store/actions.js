@@ -2,7 +2,6 @@ export default {
   mouseover(context, value) {
     context.commit('mouseover', value);
   },
-
   setVisible({ commit }, value) {
     commit('setVisible', value);
   },

@@ -7,6 +7,11 @@
       @error="errorHandler"
     />
 
+    <Screenshare
+      :isScreensharing="isScreensharing"
+      :session="session"
+    />
+
     <Subscriber
       v-for="stream in streams"
       :key="stream.streamId"
@@ -21,11 +26,12 @@
 import { mapState } from 'vuex';
 import OT from '@opentok/client';
 import Publisher from './Publisher.vue';
+import Screenshare from './Screenshare.vue';
 import Subscriber from './Subscriber.vue';
 
 export default {
   name: 'Session',
-  components: { Publisher, Subscriber },
+  components: { Publisher, Screenshare, Subscriber },
   props: {
     apiKey: { type: String, required: true },
     sessionId: { type: String, required: true },

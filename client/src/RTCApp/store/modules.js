@@ -3,6 +3,7 @@ import actions from './actions';
 import mutations from './mutations';
 import callControls from '../CallControls/store/modules';
 import videoSession from '../VideoSession/store/modules';
+import chat from '../Chat/store/modules';
 
 export default {
   namespaced: true,
@@ -12,5 +13,6 @@ export default {
   modules: {
     callControls,
     videoSession,
+    chat,
   },
 };
