@@ -2,6 +2,7 @@
   <div class="room">
     <TopBanner />
     <RoomScreen />
+    <Chat />
   </div>
 </template>
 
@@ -9,10 +10,11 @@
 import { mapState } from 'vuex';
 import TopBanner from './components/TopBanner.vue';
 import RoomScreen from './components/RoomScreen.vue';
+import Chat from '../Chat/index.vue';
 
 export default {
   name: 'RoomPage',
-  components: { TopBanner, RoomScreen },
+  components: { TopBanner, RoomScreen, Chat },
   computed: {
     ...mapState('rtcApp', ['config']),
   },
