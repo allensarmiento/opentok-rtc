@@ -20,7 +20,7 @@ export default {
   computed: {
     ...mapState('rtcApp/chat', ['messages']),
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

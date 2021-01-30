@@ -6,25 +6,8 @@
   ]">
     <DialogChat>
       <ChatHeader />
-
-      <div id="chatMsgs" class="tc-list">
-        <ul></ul>
-      </div>
-
-      <footer>
-        <textarea
-          id="msgText"
-          placeholder="Type your message..."
-          required
-        ></textarea>
-
-        <button
-          id="sendTxt"
-          type="submit"
-          data-icon="send"
-          class="btn btn-blue btn-padding btn-padding-small"
-        ></button>
-      </footer>
+      <ChatMessages />
+      <ChatFooter />
     </DialogChat>
   </section>
 </template>
@@ -33,10 +16,17 @@
 import { mapState } from 'vuex';
 import DialogChat from './components/DialogChat.vue';
 import ChatHeader from './components/ChatHeader.vue';
+import ChatMessages from './components/ChatMessages.vue';
+import ChatFooter from './components/ChatFooter.vue';
 
 export default {
   name: 'Chat',
-  components: { DialogChat, ChatHeader },
+  components: {
+    DialogChat,
+    ChatHeader,
+    ChatMessages,
+    ChatFooter,
+  },
   computed: {
     ...mapState('rtcApp/chat', ['show', 'visible']),
   },

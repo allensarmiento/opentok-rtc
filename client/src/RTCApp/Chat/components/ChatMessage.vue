@@ -21,18 +21,21 @@ export default {
   computed: {
     isYourself() {
       return true;
-    }
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .message {
+  align-self: flex-start;
   position: relative;
-  padding: 1.2rem 1.5rem;
+  width: fit-content;
+  padding: 1rem 3rem 1rem 2rem;
   box-sizing: border-box;
-  background-color: #d1d9dd;
-  border-bottom: .1rem solid #e5eaec;
+  background-color: transparent;
+  color: #3f4f57;
+  border: 0;
   font-size: 1.2rem;
   line-height: 1.4rem;
 }
