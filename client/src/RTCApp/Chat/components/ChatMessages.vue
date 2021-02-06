@@ -2,7 +2,7 @@
   <div class="container">
     <ul class="messages">
       <ChatMessage
-        v-for="message in messages"
+        v-for="message in chatMessages"
         :key="message.id"
         :message="message"
       />
@@ -18,7 +18,7 @@ export default {
   name: 'ChatMessages',
   components: { ChatMessage },
   computed: {
-    ...mapState('rtcApp/chat', ['messages']),
+    ...mapState('rtcApp/videoSession', ['chatMessages']),
   },
 };
 </script>

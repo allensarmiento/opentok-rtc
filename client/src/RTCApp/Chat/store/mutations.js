@@ -1,4 +1,7 @@
 export default {
+  setShow(state, value) {
+    state.show = value;
+  },
   setVisible(state, value) {
     state.visible = value;
   },

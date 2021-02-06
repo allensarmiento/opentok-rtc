@@ -1,6 +1,6 @@
 export default () => ({
   show: false,
   visible: false,
-  messages: [],
+  unread: [],
   input: '',
 });

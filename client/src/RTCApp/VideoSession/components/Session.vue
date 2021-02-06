@@ -23,8 +23,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import OT from '@opentok/client';
+import { mapState, mapActions } from 'vuex';
 import Publisher from './Publisher.vue';
 import Screenshare from './Screenshare.vue';
 import Subscriber from './Subscriber.vue';
@@ -37,14 +36,12 @@ export default {
     sessionId: { type: String, required: true },
     token: { type: String, required: true },
   },
-  data() {
-    return {
-      session: null,
-      streams: [],
-    };
-  },
   computed: {
+    ...mapState('rtcApp', ['username']),
     ...mapState('rtcApp/videoSession', [
+      'session',
+      'streams',
+      'chatMessages',
       'publishAudio',
       'publishVideo',
       'isScreensharing',
@@ -57,25 +54,15 @@ export default {
     },
   },
   created() {
-    this.session = OT.initSession(this.apiKey, this.sessionId);
-
-    this.session.connect(this.token, (error) => {
-      if (error) this.errorHandler(error);
-    });
-
-    this.session.on('streamCreated', (event) => {
-      this.streams.push(event.stream);
-    });
-
-    this.session.on('streamDestroyed', (event) => {
-      const streamIdx = this.streams.indexOf(event.stream);
-
-      if (streamIdx > -1) {
-        this.streams.splice(streamIdx, 1);
-      }
+    this.createSession({
+      apiKey: this.apiKey,
+      sessionId: this.sessionId,
+      token: this.token,
+      username: this.username,
     });
   },
   methods: {
+    ...mapActions('rtcApp/videoSession', ['createSession']),
     errorHandler(error) {
       console.log(error);
     },

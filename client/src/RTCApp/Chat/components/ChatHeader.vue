@@ -5,16 +5,20 @@
       <span class="title">Messaging</span>
     </div>
 
-    <DataIcon dataIcon="close-blue" />
+    <DataIcon dataIcon="close-blue" @click.native="setVisible(false)" />
   </header>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import DataIcon from '../../ui/DataIcon.vue';
 
 export default {
   name: 'ChatHeader',
   components: { DataIcon },
+  methods: {
+    ...mapActions('rtcApp/chat', ['setVisible']),
+  },
 };
 </script>
 

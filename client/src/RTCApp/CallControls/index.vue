@@ -11,43 +11,30 @@
     <InviteControl />
     <ScreenshareControl v-if="config.Screensharing.enabled" />
     <AnnotateControl v-if="config.Screensharing.annotations.enabled" />
-
-    <ControlsButton id="message-btn">
-      <template v-slot:button>
-        <DataIcon dataIcon="message" />
-      </template>
-      <template v-slot:description>
-        Message&nbsp;
-        <span id="unreadMsg">
-          (<span id="unreadCount">0</span>)
-        </span>
-      </template>
-    </ControlsButton>
+    <ChatControl />
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import ControlsButton from './components/ControlsButton.vue';
-import DataIcon from '../ui/DataIcon.vue';
 import LeaveCallControl from './components/LeaveCallControl.vue';
 import VideoControl from './components/VideoControl.vue';
 import MicControl from './components/MicControl.vue';
 import InviteControl from './components/InviteControl.vue';
 import ScreenshareControl from './components/ScreenshareControl.vue';
 import AnnotateControl from './components/AnnotateControl.vue';
+import ChatControl from './components/ChatControl.vue';
 
 export default {
   name: 'CallControls',
   components: {
-    ControlsButton,
-    DataIcon,
     LeaveCallControl,
     VideoControl,
     MicControl,
     InviteControl,
     ScreenshareControl,
     AnnotateControl,
+    ChatControl,
   },
   watch: {
     show(value) {
@@ -135,11 +122,5 @@ export default {
     background-color: rgba(0, 0, 0, .8);
     background-image: none;
   }
-}
-
-::v-deep [data-icon="message"] {
-  height: 2rem;
-  width: 2.4rem;
-  background-image: url(./assets/message.svg);
 }
 </style>

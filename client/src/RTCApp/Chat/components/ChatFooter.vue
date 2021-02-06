@@ -1,6 +1,8 @@
 <template>
   <footer class="footer">
     <textarea
+      @keydown.enter="onSendClicked"
+      v-model="message"
       id="msgText"
       class="input"
       placeholder="Type your message..."
@@ -8,6 +10,7 @@
     ></textarea>
 
     <button
+      @click="onSendClicked"
       id="sendTxt"
       type="submit"
       data-icon="send"
@@ -24,8 +27,24 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   name: 'ChatFooter',
+  data() {
+    return {
+      message: '',
+    };
+  },
+  methods: {
+    ...mapActions('rtcApp/videoSession', ['addChatMessage']),
+    onSendClicked() {
+      if (this.message) {
+        this.addChatMessage(this.message);
+        this.message = '';
+      }
+    },
+  },
 };
 </script>
 
@@ -68,5 +87,9 @@ export default {
   box-shadow: 0 .2rem .4rem 0 rgba(0, 0, 0, 0.5);
   border-radius: 50%;
   line-height: 2.5rem;
+}
+
+::v-deep [data-icon="send"] {
+  background-image: url(../assets/send.svg);
 }
 </style>

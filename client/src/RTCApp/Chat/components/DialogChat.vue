@@ -1,5 +1,5 @@
 <template>
-  <form id="chatForm" class="dialog-chat">
+  <form id="chatForm" class="dialog-chat" @submit.prevent>
     <slot></slot>
   </form>
 </template>

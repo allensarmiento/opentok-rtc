@@ -24,6 +24,7 @@ export default () => ({
     },
   },
 
+  username: 'anonymous',
   roomName: 'test',
 
   layoutType: 'hangout_vertical',

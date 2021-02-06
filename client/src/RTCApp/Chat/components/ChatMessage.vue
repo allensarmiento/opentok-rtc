@@ -4,7 +4,7 @@
     isYourself ? 'yourself' : 'event',
   ]">
     <MessageContent :isYourself="isYourself">
-      {{ messsage.content }}
+      {{ message.data }}
     </MessageContent>
   </li>
 </template>

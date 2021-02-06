@@ -1,4 +1,7 @@
 export default {
+  setShow({ commit }, value) {
+    commit('setShow', value);
+  },
   setVisible({ commit }, value) {
     commit('setVisible', value);
   },
