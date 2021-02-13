@@ -1,5 +1,5 @@
 <template>
-  <section class="screen" @mousemove="mouseover(true)">
+  <section class="screen" @mousemove="mouseoverControls(true)">
     <div class="streams">
       <div class="tc-list">
         <VideoSession />
@@ -22,10 +22,10 @@ export default {
     CallControls,
   },
   computed: {
-    ...mapState('rtcApp/callControls', ['config']),
+    ...mapState('rtcApp', ['config']),
   },
   methods: {
-    ...mapActions('rtcApp/callControls', ['mouseover']),
+    ...mapActions('rtcApp', ['mouseoverControls']),
   },
 };
 </script>

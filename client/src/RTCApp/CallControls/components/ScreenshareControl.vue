@@ -20,10 +20,10 @@ export default {
   name: 'ScreenshareControl',
   components: { ControlsButton, DataIcon },
   computed: {
-    ...mapState('rtcApp/videoSession', ['isScreensharing']),
+    ...mapState('rtcApp', ['isScreensharing']),
   },
   methods: {
-    ...mapActions('rtcApp/videoSession', ['setIsScreensharing']),
+    ...mapActions('rtcApp', ['setIsScreensharing']),
   },
 };
 </script>

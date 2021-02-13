@@ -48,7 +48,7 @@ export default {
     },
   },
   async mounted() {
-    const response = await axios.post('http://localhost:5000/credentials');
+    const response = await axios.get('http://localhost:5000/credentials');
     const { apiKey, apiSecret } = response.data;
     this.config.OpenTok.apiKey = apiKey;
     this.config.OpenTok.apiSecret = apiSecret;

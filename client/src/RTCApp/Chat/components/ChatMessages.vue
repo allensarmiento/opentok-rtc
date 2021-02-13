@@ -18,7 +18,7 @@ export default {
   name: 'ChatMessages',
   components: { ChatMessage },
   computed: {
-    ...mapState('rtcApp/videoSession', ['chatMessages']),
+    ...mapState('rtcApp', ['chatMessages']),
   },
 };
 </script>

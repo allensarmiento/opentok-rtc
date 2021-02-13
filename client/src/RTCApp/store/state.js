@@ -1,4 +1,5 @@
 export default () => ({
+  // Configuration
   config: {
     showTos: false,
     OpenTok: {
@@ -23,9 +24,28 @@ export default () => ({
       },
     },
   },
-
+  isWebRTCVersion: false,
   username: 'anonymous',
   roomName: 'test',
-
   layoutType: 'hangout_vertical',
+
+  // Call Controls
+  showControls: false,
+  visibleControls: false,
+  overControls: false,
+  hideControlsTimer: null,
+
+  // Chat
+  showChat: false,
+  visibleChat: false,
+  unreadMessages: [],
+  chatInput: '',
+
+  // Video Session
+  session: null,
+  streams: [],
+  chatMessages: [],
+  publishAudio: false,
+  publishVideo: false,
+  isScreensharing: false,
 });

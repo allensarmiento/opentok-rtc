@@ -20,10 +20,10 @@ export default {
   name: 'VideoControl',
   components: { ControlsButton, DataIcon },
   computed: {
-    ...mapState('rtcApp/videoSession', ['publishVideo']),
+    ...mapState('rtcApp', ['publishVideo']),
   },
   methods: {
-    ...mapActions('rtcApp/videoSession', ['setPublishVideo']),
+    ...mapActions('rtcApp', ['setPublishVideo']),
   },
 };
 </script>

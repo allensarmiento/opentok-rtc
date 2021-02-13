@@ -2,8 +2,8 @@
   <div
     id="controls"
     :class="['controls', visibleClass]"
-    @mouseover="mouseoverControls"
-    @mouseout="mouseoutControls"
+    @mouseover="mouseover"
+    @mouseout="mouseout"
   >
     <LeaveCallControl />
     <VideoControl />
@@ -37,48 +37,48 @@ export default {
     ChatControl,
   },
   watch: {
-    show(value) {
-      if (value) this.showControls();
+    showControls(value) {
+      if (value) this.show();
     },
   },
   computed: {
-    ...mapState('rtcApp', ['config']),
-    ...mapState('rtcApp/callControls', [
-      'show',
-      'visible',
-      'over',
-      'hideTimer',
+    ...mapState('rtcApp', [
+      'config',
+      'showControls',
+      'visibleControls',
+      'overControls',
+      'hideControlsTimer',
     ]),
     visibleClass() {
-      return this.visible ? 'visible' : '';
+      return this.visibleControls ? 'visible' : '';
     },
   },
   methods: {
-    ...mapActions('rtcApp/callControls', [
-      'mouseover',
-      'setVisible',
-      'setOver',
-      'setHideTimer',
+    ...mapActions('rtcApp', [
+      'mouseoverControls',
+      'setVisibleControls',
+      'setOverControls',
+      'setHideControlsTimer',
     ]),
-    showControls() {
-      this.setVisible(true);
+    show() {
+      this.setVisibleControls(true);
 
-      if (!this.over && !this.hideTimer) {
-        this.setHideTimer(setTimeout(this.hideControls, 3000));
+      if (!this.overControls && !this.hideControlsTimer) {
+        this.setHideControlsTimer(setTimeout(this.hide, 3000));
       }
     },
-    hideControls() {
-      this.setHideTimer(null);
-      this.setVisible(false);
-      this.mouseover(false);
+    hide() {
+      this.setHideControlsTimer(null);
+      this.setVisibleControls(false);
+      this.mouseoverControls(false);
     },
-    mouseoverControls() {
+    mouseover() {
       clearTimeout(this.hideTimer);
-      this.setOver(true);
+      this.setOverControls(true);
     },
-    mouseoutControls() {
-      this.setOver(false);
-      this.hideControls();
+    mouseout() {
+      this.setOverControls(false);
+      this.hide();
     },
   },
 };

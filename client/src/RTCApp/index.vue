@@ -1,16 +1,16 @@
 <template>
-  <Room v-if="mounted" />
+  <Home v-if="!mounted" />
+  <Room v-else />
 </template>
 
 <script>
 import { mapActions } from 'vuex';
+import Home from './Home/index.vue';
 import Room from './Room/index.vue';
 
 export default {
   name: 'RTCApp',
-  components: {
-    Room,
-  },
+  components: { Home, Room },
   props: {
     config: { type: Object, required: true },
   },
@@ -21,7 +21,7 @@ export default {
   },
   mounted() {
     this.setConfig(this.config);
-    this.mounted = true;
+    // this.mounted = true;
   },
   methods: {
     ...mapActions('rtcApp', ['setConfig']),

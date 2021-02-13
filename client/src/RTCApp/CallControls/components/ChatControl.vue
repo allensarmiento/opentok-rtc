@@ -1,12 +1,15 @@
 <template>
-  <ControlsButton id="message-btn" @click.native="setShow(!show)">
+  <ControlsButton
+    id="message-btn"
+    @click.native="setShowChat(!showChat)"
+  >
     <template v-slot:button>
       <DataIcon dataIcon="message" />
     </template>
     <template v-slot:description>
       Message &nbsp;
       <span id="unreadMsg">
-        (<span id="unreadCount">{{ unread.length }}</span>)
+        (<span id="unreadCount">{{ unreadMessages.length }}</span>)
       </span>
     </template>
   </ControlsButton>
@@ -20,32 +23,32 @@ import DataIcon from '../../ui/DataIcon.vue';
 export default {
   components: { ControlsButton, DataIcon },
   watch: {
-    show(shouldShow) {
+    showChat(shouldShow) {
       if (shouldShow) {
         setTimeout(() => {
-          this.setVisible(true);
+          this.setVisibleChat(true);
         }, 50);
       }
     },
-    visible(isVisible) {
+    visibleChat(isVisible) {
       if (!isVisible) {
         setTimeout(() => {
-          this.setShow(false);
+          this.setShowChat(false);
         }, 50);
       }
     },
   },
   computed: {
-    ...mapState('rtcApp/chat', [
-      'show',
-      'visible',
-      'unread',
+    ...mapState('rtcApp', [
+      'showChat',
+      'visibleChat',
+      'unreadMessages',
     ]),
   },
   methods: {
-    ...mapActions('rtcApp/chat', [
-      'setShow',
-      'setVisible',
+    ...mapActions('rtcApp', [
+      'setShowChat',
+      'setVisibleChat',
     ]),
   },
 };

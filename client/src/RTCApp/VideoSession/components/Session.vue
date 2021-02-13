@@ -37,8 +37,8 @@ export default {
     token: { type: String, required: true },
   },
   computed: {
-    ...mapState('rtcApp', ['username']),
-    ...mapState('rtcApp/videoSession', [
+    ...mapState('rtcApp', [
+      'username',
       'session',
       'streams',
       'chatMessages',
@@ -62,7 +62,7 @@ export default {
     });
   },
   methods: {
-    ...mapActions('rtcApp/videoSession', ['createSession']),
+    ...mapActions('rtcApp', ['createSession']),
     errorHandler(error) {
       console.log(error);
     },

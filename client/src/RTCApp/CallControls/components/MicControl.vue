@@ -20,10 +20,10 @@ export default {
   name: 'MicControl',
   components: { ControlsButton, DataIcon },
   computed: {
-    ...mapState('rtcApp/videoSession', ['publishAudio']),
+    ...mapState('rtcApp', ['publishAudio']),
   },
   methods: {
-    ...mapActions('rtcApp/videoSession', ['setPublishAudio']),
+    ...mapActions('rtcApp', ['setPublishAudio']),
   },
 };
 </script>

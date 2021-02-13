@@ -37,7 +37,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions('rtcApp/videoSession', ['addChatMessage']),
+    ...mapActions('rtcApp', ['addChatMessage']),
     onSendClicked() {
       if (this.message) {
         this.addChatMessage(this.message);

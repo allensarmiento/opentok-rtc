@@ -5,7 +5,7 @@
       <span class="title">Messaging</span>
     </div>
 
-    <DataIcon dataIcon="close-blue" @click.native="setVisible(false)" />
+    <DataIcon dataIcon="close-blue" @click.native="setVisibleChat(false)" />
   </header>
 </template>
 
@@ -17,7 +17,7 @@ export default {
   name: 'ChatHeader',
   components: { DataIcon },
   methods: {
-    ...mapActions('rtcApp/chat', ['setVisible']),
+    ...mapActions('rtcApp', ['setVisibleChat']),
   },
 };
 </script>

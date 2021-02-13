@@ -1,8 +1,8 @@
 <template>
   <section :class="[
     'chat',
-    show ? 'show' : '',
-    visible ? 'visible' : '',
+    showChat ? 'show' : '',
+    visibleChat ? 'visible' : '',
   ]">
     <DialogChat>
       <ChatHeader />
@@ -28,7 +28,7 @@ export default {
     ChatFooter,
   },
   computed: {
-    ...mapState('rtcApp/chat', ['show', 'visible']),
+    ...mapState('rtcApp', ['showChat', 'visibleChat']),
   },
 };
 </script>
