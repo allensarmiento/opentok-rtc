@@ -1,69 +1,37 @@
 <template>
   <div class="home">
-    <div id="righthand-container">
-      <div id="righthand-container-cell">
-        <section id="main-content">
-          <header class="header">
-            <h1 v-if="isWebRTCVersion">WebRTC Demo</h1>
-            <h1 v-else>OpenTok Demo by</h1>
-            <img
-              src="./assets/new-vonage-logo.png"
-              alt="opentok transparent logo"
-            />
-            <h2 v-if="isWebRTCVersion">
-              Built by TokBox on the OpenTok Platfrom
-            </h2>
-            <h3 v-if="isWebRTCVersion">
-              This WebRTC Demo enables group video conferencing, text&nbsp;
-              chat, screen sharing, and more.
-            </h3>
-          </header>
-
-          <form>
-            <div>
-              <input id="room" class="text-input required" data-wd="roomname" />
-              <label id="room-label">Meeting name</label>
-              <p class="error-room error-text">
-                <i data-icon="warning" />
-                Please enter a meeting name.
-              </p>
-            </div>
-
-            <div>
-              <input id="user" class="text-input" data-wd="username" />
-              <label id="user-label">Your name</label>
-            </div>
-
-            <button id="enter" data-wd="enterroom"></button>
-          </form>
-
-          <div class="landing-more-info">
-            Need help?
-            <a href="https://tokbox.com/" target="_blank">
-              About TokBox
-            </a>
-            /
-            <a href="https://tokbox.com/contact/sales" target="_blank">
-              Contact Sales
-            </a>
-          </div>
-
-          <div class="safari-plug">
-            <a href="https://safari.opentokrtc.com/">
-              Try the WebRTC Demo for Safari.
-            </a>
-          </div>
+    <RightContainer>
+      <ContainerCell>
+        <section class="content">
+          <VonageHeader :isWebRTCVersion="isWebRTCVersion" />
+          <RoomForm />
+          <MoreInfo />
+          <SafariPlug />
         </section>
-      </div>
-    </div>
+      </ContainerCell>
+    </RightContainer>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import RightContainer from './components/RightContainer.vue';
+import ContainerCell from './components/ContainerCell.vue';
+import VonageHeader from './components/VonageHeader.vue';
+import RoomForm from './components/RoomForm.vue';
+import MoreInfo from './components/MoreInfo.vue';
+import SafariPlug from './components/SafariPlug.vue';
 
 export default {
   name: 'Home',
+  components: {
+    RightContainer,
+    ContainerCell,
+    VonageHeader,
+    RoomForm,
+    MoreInfo,
+    SafariPlug,
+  },
   computed: {
     ...mapState('rtcApp', ['isWebRTCVersion']),
   },
@@ -88,11 +56,26 @@ export default {
   overflow: hidden;
 }
 
-.header {
-  min-height: 22.2rem;
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  right: .2rem;
+  float: right;
+  width: 36rem;
+  margin-right: 8rem;
+  padding: 2rem;
+  background: rgba(0, 0, 0, .6);
+  border-radius: 1rem;
+  box-shadow: 0 .2rem .6rem rgba(0, 0, 0, .3);
 
   @include for-size(smartphones-portrait) {
-    min-height: 6.6rem;
+    height: 100%;
+    width: 100%;
+    margin-right: 0;
   }
 }
 </style>
