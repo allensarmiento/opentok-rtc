@@ -1,10 +1,10 @@
 <template>
-  <Home v-if="!mounted" />
+  <Home v-if="!roomName" />
   <Room v-else />
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import Home from './Home/index.vue';
 import Room from './Room/index.vue';
 
@@ -14,14 +14,11 @@ export default {
   props: {
     config: { type: Object, required: true },
   },
-  data() {
-    return {
-      mounted: false,
-    };
+  computed: {
+    ...mapState('rtcApp', ['roomName', 'username']),
   },
   mounted() {
     this.setConfig(this.config);
-    // this.mounted = true;
   },
   methods: {
     ...mapActions('rtcApp', ['setConfig']),

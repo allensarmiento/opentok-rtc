@@ -4,6 +4,14 @@ export default {
     context.commit('setConfig', config);
   },
 
+  // Room Information
+  setRoomName({ commit }, roomName) {
+    commit('setRoomName', roomName);
+  },
+  setUsername({ commit }, username) {
+    commit('setUsername', username);
+  },
+
   // Call Controls
   mouseoverControls({ commit }, shouldShow) {
     commit('mouseoverControls', shouldShow);

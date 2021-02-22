@@ -1,26 +1,55 @@
 <template>
-  <form class="form">
+  <form class="form" @submit.prevent>
     <div class="input-group">
-      <input id="room" class="input required" data-wd="roomname" />
+      <input
+        v-model="roomInput"
+        id="room"
+        class="input required"
+        data-wd="roomname"
+      />
       <label class="label user">Meeting name</label>
       <p class="error-text">
         <i data-icon="warning" />
         Please enter a meeting name.
       </p>
     </div>
-
     <div class="input-group">
-      <input id="user" class="input" data-wd="username" />
+      <input
+        v-model="userInput"
+        id="user"
+        class="input"
+        data-wd="username"
+      />
       <label class="label user">Your name</label>
     </div>
-
-    <button class="enter-btn" data-wd="enterroom"></button>
+    <button class="enter-btn" data-wd="enterroom" @click="onEnterRoom"></button>
   </form>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   name: 'RoomForm',
+  data() {
+    return {
+      roomInput: '',
+      userInput: '',
+    };
+  },
+  methods: {
+    ...mapActions('rtcApp', ['setRoomName', 'setUsername']),
+    onEnterRoom() {
+      console.log(`Enter room clicked: ${this.roomInput} ${this.userInput}`);
+      if (this.roomInput) {
+        this.setRoomName(this.roomInput);
+
+        if (this.userInput) {
+          this.setUsername(this.userInput);
+        }
+      }
+    },
+  },
 };
 </script>
 

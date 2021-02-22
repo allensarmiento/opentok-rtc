@@ -6,6 +6,14 @@ export default {
     state.config = config;
   },
 
+  // Room Information
+  setRoomName(state, roomName) {
+    state.roomName = roomName;
+  },
+  setUsername(state, username) {
+    state.username = username;
+  },
+
   // Call Controls
   mouseoverControls(state, shouldShow) {
     state.showControls = shouldShow;

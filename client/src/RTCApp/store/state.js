@@ -26,7 +26,7 @@ export default () => ({
   },
   isWebRTCVersion: false,
   username: 'anonymous',
-  roomName: 'test',
+  roomName: '',
   layoutType: 'hangout_vertical',
 
   // Call Controls
