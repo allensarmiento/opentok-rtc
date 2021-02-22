@@ -1,16 +1,16 @@
 <template>
-  <Home v-if="!roomName" />
+  <Landing v-if="!roomName" />
   <Room v-else />
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import Home from './Home/index.vue';
-import Room from './Room/index.vue';
+import Landing from './views/Landing.vue';
+import Room from './views/Room.vue';
 
 export default {
   name: 'RTCApp',
-  components: { Home, Room },
+  components: { Landing, Room },
   props: {
     config: { type: Object, required: true },
   },

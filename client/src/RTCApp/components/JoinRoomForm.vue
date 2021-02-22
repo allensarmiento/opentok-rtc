@@ -5,7 +5,6 @@
         v-model="roomInput"
         id="room"
         class="input required"
-        data-wd="roomname"
       />
       <label class="label user">Meeting name</label>
       <p class="error-text">
@@ -18,11 +17,10 @@
         v-model="userInput"
         id="user"
         class="input"
-        data-wd="username"
       />
       <label class="label user">Your name</label>
     </div>
-    <button class="enter-btn" data-wd="enterroom" @click="onEnterRoom"></button>
+    <button class="enter-btn" @click.prevent="onEnterRoom"></button>
   </form>
 </template>
 
@@ -54,7 +52,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../sass/mixins.scss";
+@import "../sass/mixins.scss";
 
 .form {
   height: 10rem;

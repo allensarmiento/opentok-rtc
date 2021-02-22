@@ -1,6 +1,7 @@
 export default () => ({
   // Configuration
   config: {
+    videoSessionEndpoint: '', // TODO
     showTos: false,
     OpenTok: {
       apiKey: '',
