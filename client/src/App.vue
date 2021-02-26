@@ -16,6 +16,7 @@ export default {
   data() {
     return {
       config: {
+        serverEndpoint: 'http://localhost:5000',
         showTos: false,
         OpenTok: {
           apiKey: '',

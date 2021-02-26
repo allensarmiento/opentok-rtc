@@ -48,7 +48,7 @@ export default {
 }
 
 ::v-deep [data-icon="layout-icon"] {
-  background-image: url(../assets/images/icons/layout-icon.svg);
+  background-image: url(../assets/layout-icon.svg);
 }
 
 .label {

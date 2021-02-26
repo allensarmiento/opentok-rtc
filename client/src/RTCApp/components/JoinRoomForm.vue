@@ -41,7 +41,6 @@ export default {
       console.log(`Enter room clicked: ${this.roomInput} ${this.userInput}`);
       if (this.roomInput) {
         this.setRoomName(this.roomInput);
-
         if (this.userInput) {
           this.setUsername(this.userInput);
         }

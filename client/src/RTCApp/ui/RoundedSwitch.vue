@@ -40,6 +40,6 @@ export default {
 }
 
 ::v-deep [data-icon="switch"] {
-  background-image: url(../assets/images/icons/switch_off_blue.svg);
+  background-image: url(../assets/switch_off_blue.svg);
 }
 </style>
