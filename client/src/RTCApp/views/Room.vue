@@ -3,6 +3,7 @@
     <TopBanner />
     <RoomScreen />
     <Chat />
+    <Bubbles />
   </div>
 </template>
 
@@ -11,10 +12,16 @@ import { mapState } from 'vuex';
 import TopBanner from '../components/TopBanner.vue';
 import RoomScreen from '../components/RoomScreen.vue';
 import Chat from '../components/Chat.vue';
+import Bubbles from '../components/Bubbles.vue';
 
 export default {
   name: 'RoomPage',
-  components: { TopBanner, RoomScreen, Chat },
+  components: {
+    TopBanner,
+    RoomScreen,
+    Chat,
+    Bubbles,
+  },
   computed: {
     ...mapState('rtcApp', ['config']),
   },

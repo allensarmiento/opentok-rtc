@@ -14,6 +14,9 @@
 <script>
 import DataIcon from './DataIcon.vue';
 
+// TODO: Add state for the layout (what is the default?)
+// When the state is updated, it should change the look of the streams
+
 export default {
   name: 'LayoutContainer',
   components: { DataIcon },

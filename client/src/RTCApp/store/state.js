@@ -25,6 +25,7 @@ export default () => ({
       },
     },
   },
+  
   isWebRTCVersion: false,
   username: 'anonymous',
   roomName: '',
